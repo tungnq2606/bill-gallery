@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, ScrollView, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Avatar, SegmentedControl, ScreenHeader, Card, TextField, AddPersonSheet } from '@/shared/components';
@@ -153,16 +153,16 @@ const SplitScreen = () => {
             return (
               <View key={r.personId} style={styles.resultRow}>
                 <Avatar initials={person.initials} color={person.avatarColor} size="sm" />
-                <Text style={styles.resultName}>{person.name}</Text>
+                <Text style={calc.splitType === 'custom' ? styles.resultNameShort : styles.resultName}>{person.name}</Text>
                 {calc.splitType === 'custom' ? (
-                  <View style={styles.customInput}>
-                    <TextField
-                      value={calc.customAmounts[r.personId] ? String(calc.customAmounts[r.personId]) : ''}
-                      onChangeText={(v) => calc.setCustomAmount(r.personId, parseInt(v.replace(/\D/g, ''), 10) || 0)}
-                      placeholder="0"
-                      keyboardType="number-pad"
-                    />
-                  </View>
+                  <TextInput
+                    style={styles.customInput}
+                    value={calc.customAmounts[r.personId] ? String(calc.customAmounts[r.personId]) : ''}
+                    onChangeText={(v) => calc.setCustomAmount(r.personId, parseInt(v.replace(/\D/g, ''), 10) || 0)}
+                    placeholder="0"
+                    placeholderTextColor={colors.textTertiary}
+                    keyboardType="number-pad"
+                  />
                 ) : (
                   <Text style={styles.resultAmount}>{formatAmount(r.amount)}</Text>
                 )}
@@ -265,11 +265,17 @@ const styles = StyleSheet.create({
     borderRadius: radius.md, borderWidth: 1, borderColor: colors.border,
   },
   resultName: { flex: 1, fontSize: 15, fontWeight: '600', color: colors.textPrimary },
+  resultNameShort: { fontSize: 15, fontWeight: '600', color: colors.textPrimary, maxWidth: '40%' },
   resultAmount: {
     fontSize: 15, fontWeight: '700', fontFamily: 'Outfit-Bold',
     color: colors.textPrimary, fontVariant: ['tabular-nums'],
   },
-  customInput: { width: 120 },
+  customInput: {
+    flex: 1, height: 40, paddingHorizontal: 12,
+    backgroundColor: colors.bgSunken, borderRadius: 10,
+    fontSize: 15, fontWeight: '600', color: colors.textPrimary,
+    textAlign: 'right', fontVariant: ['tabular-nums'],
+  },
   warning: {
     fontSize: 13, color: colors.unpaid, fontWeight: '600',
     textAlign: 'center', marginTop: spacing.md,
