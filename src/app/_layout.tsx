@@ -3,6 +3,8 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import * as ImagePicker from 'expo-image-picker';
+import { Camera } from 'expo-camera';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 SplashScreen.preventAutoHideAsync();
@@ -22,12 +24,15 @@ const RootLayout = () => {
   const [hasOnboarded, setHasOnboarded] = useState(false);
 
   useEffect(() => {
-    const checkOnboarding = async () => {
+    const init = async () => {
       const value = await AsyncStorage.getItem(ONBOARDING_KEY);
       setHasOnboarded(value === 'true');
       setIsReady(true);
+      // Pre-request permissions so picker/camera open instantly
+      ImagePicker.requestMediaLibraryPermissionsAsync();
+      Camera.requestCameraPermissionsAsync();
     };
-    checkOnboarding();
+    init();
   }, []);
 
   useEffect(() => {
