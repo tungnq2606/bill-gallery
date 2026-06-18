@@ -157,7 +157,7 @@ const SplitScreen = () => {
                 {calc.splitType === 'custom' ? (
                   <TextInput
                     style={styles.customInput}
-                    value={calc.customAmounts[r.personId] ? String(calc.customAmounts[r.personId]) : ''}
+                    value={calc.customAmounts[r.personId] ? calc.customAmounts[r.personId].toLocaleString('vi-VN') : ''}
                     onChangeText={(v) => calc.setCustomAmount(r.personId, parseInt(v.replace(/\D/g, ''), 10) || 0)}
                     placeholder="0"
                     placeholderTextColor={colors.textTertiary}
