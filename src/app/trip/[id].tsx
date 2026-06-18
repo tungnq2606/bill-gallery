@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, FAB, ActionSheet } from '@/shared/components';
 import { colors } from '@/shared/theme';
@@ -18,11 +18,13 @@ const TripDetailScreen = () => {
 
   const trip = trips.find((t) => t.id === id);
 
-  useEffect(() => {
-    if (id) {
-      setFilter({ tripId: id });
-    }
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        setFilter({ tripId: id });
+      }
+    }, [id])
+  );
 
   return (
     <View style={styles.container}>

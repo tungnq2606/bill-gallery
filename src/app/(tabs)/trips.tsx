@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, FAB, CreateTripSheet } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
@@ -13,9 +13,11 @@ const TripsScreen = () => {
   const { trips, loading, loadTrips } = useTripStore();
   const [showCreate, setShowCreate] = useState(false);
 
-  useEffect(() => {
-    loadTrips();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadTrips();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

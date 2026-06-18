@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenHeader, FAB, ActionSheet } from '@/shared/components';
 import { colors } from '@/shared/theme';
@@ -16,9 +16,11 @@ const GalleryScreen = () => {
   const [selected, setSelected] = useState('all');
   const [showActions, setShowActions] = useState(false);
 
-  useEffect(() => {
-    loadBills();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadBills();
+    }, [])
+  );
 
   const handleFilter = (key: string) => {
     setSelected(key);
