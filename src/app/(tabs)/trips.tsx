@@ -17,7 +17,7 @@ const TripsScreen = () => {
   }, []);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScreenHeader title="Trips" large />
       {trips.length === 0 ? (
         <View style={styles.empty}>

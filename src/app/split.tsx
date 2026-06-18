@@ -73,7 +73,7 @@ const SplitScreen = () => {
   if (!bill) return <View style={styles.loading} />;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScreenHeader
         title="Chia tiền"
         leftIcon={<BackIcon />}

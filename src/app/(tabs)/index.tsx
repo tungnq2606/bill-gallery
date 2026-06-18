@@ -31,7 +31,7 @@ const GalleryScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScreenHeader title="Gallery" large />
       <FilterChips selected={selected} onSelect={handleFilter} />
       <GalleryGrid bills={bills} />
