@@ -14,7 +14,7 @@ const ScreenHeader = ({ title, large = false, leftIcon, rightIcon, onBack }: Scr
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+    <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
       {onBack && leftIcon && (
         <Pressable style={styles.iconBtn} onPress={onBack}>{leftIcon}</Pressable>
       )}
