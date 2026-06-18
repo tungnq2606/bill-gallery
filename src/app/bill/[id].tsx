@@ -7,6 +7,7 @@ import { colors, typography, spacing, radius, shadows } from '@/shared/theme';
 import { formatAmount } from '@/utils/currency';
 import { formatDate } from '@/utils/date';
 import { billRepo, splitRepo, personRepo } from '@/data/repositories';
+import { useBillStore } from '@/stores/billStore';
 import type { Bill, BillAttachment, Split, SplitShare, Person } from '@/data/types';
 
 const BillDetailScreen = () => {
@@ -53,7 +54,7 @@ const BillDetailScreen = () => {
       {
         text: 'Xóa', style: 'destructive',
         onPress: async () => {
-          await billRepo.softDelete(bill.id);
+          await useBillStore.getState().deleteBill(bill.id);
           router.back();
         },
       },
