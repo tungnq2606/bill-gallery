@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, ScrollView, Pressable, Modal, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Badge, Card, PersonRow } from '@/shared/components';
@@ -19,6 +19,7 @@ const BillDetailScreen = () => {
   const [attachment, setAttachment] = useState<BillAttachment | null>(null);
   const [split, setSplit] = useState<Split | null>(null);
   const [shares, setShares] = useState<(SplitShare & { person: Person })[]>([]);
+  const [showFullImage, setShowFullImage] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -67,7 +68,9 @@ const BillDetailScreen = () => {
         {/* Image header */}
         <View style={styles.imageHeader}>
           {attachment?.uri ? (
-            <Image source={{ uri: attachment.uri }} style={styles.image} />
+            <Pressable onPress={() => setShowFullImage(true)}>
+              <Image source={{ uri: attachment.uri }} style={styles.image} />
+            </Pressable>
           ) : (
             <View style={[styles.imagePlaceholder, { backgroundColor: colors.grey200 }]}>
               <Text style={styles.placeholderIcon}>🧾</Text>
@@ -139,6 +142,20 @@ const BillDetailScreen = () => {
           <Button title="Xóa hóa đơn" variant="danger" full onPress={handleDelete} />
         </View>
       </ScrollView>
+
+      {/* Full-screen image viewer */}
+      <Modal visible={showFullImage} transparent animationType="fade">
+        <Pressable style={styles.fullImageOverlay} onPress={() => setShowFullImage(false)}>
+          <Image
+            source={{ uri: attachment?.uri }}
+            style={styles.fullImage}
+            resizeMode="contain"
+          />
+          <View style={[styles.closeBtn, { top: insets.top + 10 }]}>
+            <Text style={styles.closeIcon}>✕</Text>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -171,6 +188,18 @@ const styles = StyleSheet.create({
   noteCard: { padding: 14 },
   noteText: { fontSize: 15, color: colors.textPrimary, lineHeight: 22 },
   actions: { padding: spacing.xl, gap: 10, paddingBottom: 40 },
+  fullImageOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.95)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  fullImage: { width: '100%', height: '100%' },
+  closeBtn: {
+    position: 'absolute', right: 20,
+    width: 36, height: 36, borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  closeIcon: { color: '#fff', fontSize: 18, fontWeight: '600' },
 });
 
 export default BillDetailScreen;
