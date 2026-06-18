@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md, borderWidth: 1, borderColor: colors.border,
   },
   resultName: { flex: 1, fontSize: 15, fontWeight: '600', color: colors.textPrimary },
-  resultNameShort: { fontSize: 15, fontWeight: '600', color: colors.textPrimary, maxWidth: '40%' },
+  resultNameShort: { width: 80, fontSize: 15, fontWeight: '600', color: colors.textPrimary },
   resultAmount: {
     fontSize: 15, fontWeight: '700', fontFamily: 'Outfit-Bold',
     color: colors.textPrimary, fontVariant: ['tabular-nums'],
