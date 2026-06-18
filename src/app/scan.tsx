@@ -35,7 +35,7 @@ const ScanScreen = () => {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
+      quality: 0.5,
     });
     if (!result.canceled && result.assets.length > 0) {
       setPreviewUri(result.assets[0].uri);
@@ -57,7 +57,7 @@ const ScanScreen = () => {
     return (
       <View style={styles.container}>
         <Image source={{ uri: previewUri }} style={StyleSheet.absoluteFill} resizeMode="contain" />
-        <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
           <View style={styles.headerSpacer} />
           <Button title="Đóng" variant="ghost" size="sm" onPress={() => router.back()} />
         </View>
@@ -94,7 +94,7 @@ const ScanScreen = () => {
       <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" />
 
       {/* Top bar */}
-      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <View style={styles.headerSpacer} />
         <Button title="Đóng" variant="ghost" size="sm" onPress={() => router.back()} />
       </View>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   header: {
     position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
     flexDirection: 'row', justifyContent: 'flex-end',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.lg, paddingBottom: 4,
   },
   headerSpacer: { flex: 1 },
   body: { flex: 1, alignItems: 'center', justifyContent: 'center' },
