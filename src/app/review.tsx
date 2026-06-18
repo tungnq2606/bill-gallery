@@ -28,9 +28,7 @@ const ReviewScreen = () => {
 
   const [typeIndex, setTypeIndex] = useState(0);
   const [amount, setAmount] = useState(params.amount ?? '');
-  const [merchant, setMerchant] = useState(params.merchant ?? '');
   const [date, setDate] = useState(params.date ?? toISODate());
-  const [location, setLocation] = useState('');
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
   const [ocrLoading, setOcrLoading] = useState(false);
@@ -42,8 +40,14 @@ const ReviewScreen = () => {
       try {
         const result = await runOcr(params.imageUri!);
         if (result.total) setAmount(String(result.total));
-        if (result.merchant) setMerchant(result.merchant);
         if (result.date) setDate(result.date);
+        // Build note from OCR context
+        const parts: string[] = [];
+        if (result.merchant) parts.push(result.merchant);
+        if (result.items.length > 0) {
+          parts.push(result.items.map((i) => i.name).join(', '));
+        }
+        if (parts.length > 0) setNote(parts.join(' — '));
       } catch (e) {
         console.warn('OCR failed:', e);
       }
@@ -60,9 +64,7 @@ const ReviewScreen = () => {
     const bill = await billRepo.create({
       type: BILL_TYPES[typeIndex],
       amount: parsedAmount,
-      merchant: merchant || undefined,
       date,
-      location: location || undefined,
       note: note || undefined,
       ocrRawText: params.ocrRawText ?? undefined,
       ocrConfidence: params.ocrConfidence ? parseFloat(params.ocrConfidence) : undefined,
@@ -83,9 +85,7 @@ const ReviewScreen = () => {
     const bill = await billRepo.create({
       type: BILL_TYPES[typeIndex],
       amount: parsedAmount,
-      merchant: merchant || undefined,
       date,
-      location: location || undefined,
       note: note || undefined,
     });
     if (params.imageUri) {
@@ -146,17 +146,6 @@ const ReviewScreen = () => {
           keyboardType="number-pad"
         />
 
-        <View style={styles.gap} />
-
-        <TextField
-          label="Nơi mua"
-          value={merchant}
-          onChangeText={setMerchant}
-          placeholder="Highlands Coffee"
-        />
-
-        <View style={styles.gap} />
-
         <TextField
           label="Ngày"
           value={date}
@@ -167,19 +156,10 @@ const ReviewScreen = () => {
         <View style={styles.gap} />
 
         <TextField
-          label="Địa điểm"
-          value={location}
-          onChangeText={setLocation}
-          placeholder="Q1, TP.HCM"
-        />
-
-        <View style={styles.gap} />
-
-        <TextField
           label="Ghi chú"
           value={note}
           onChangeText={setNote}
-          placeholder="Cà phê với team"
+          placeholder="Highlands Coffee — cà phê với team"
         />
 
         {params.ocrConfidence && (
