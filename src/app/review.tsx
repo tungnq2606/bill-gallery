@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet } from 'react-native';
+import { View, ScrollView, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, TextField, SegmentedControl, ScreenHeader } from '@/shared/components';
@@ -9,6 +9,7 @@ import { toISODate } from '@/utils/date';
 import { runOcr } from '@/utils/ocrService';
 import { saveImage } from '@/utils/imageManager';
 import { billRepo } from '@/data/repositories';
+import { useTripStore } from '@/stores/tripStore';
 import type { BillType } from '@/data/types';
 
 const BILL_TYPES: BillType[] = ['receipt', 'transfer', 'manual'];
@@ -24,14 +25,19 @@ const ReviewScreen = () => {
     imageUri?: string;
     ocrRawText?: string;
     ocrConfidence?: string;
+    tripId?: string;
   }>();
 
   const [typeIndex, setTypeIndex] = useState(0);
   const [amount, setAmount] = useState(params.amount ?? '');
   const [date, setDate] = useState(params.date ?? toISODate());
   const [note, setNote] = useState('');
+  const [tripId, setTripId] = useState<string | null>(params.tripId ?? null);
   const [saving, setSaving] = useState(false);
   const [ocrLoading, setOcrLoading] = useState(false);
+  const { trips, loadTrips } = useTripStore();
+
+  useEffect(() => { loadTrips(); }, []);
 
   useEffect(() => {
     if (!params.imageUri || params.amount) return;
@@ -66,6 +72,7 @@ const ReviewScreen = () => {
       amount: parsedAmount,
       date,
       note: note || undefined,
+      tripId: tripId ?? undefined,
       ocrRawText: params.ocrRawText ?? undefined,
       ocrConfidence: params.ocrConfidence ? parseFloat(params.ocrConfidence) : undefined,
     });
@@ -87,6 +94,7 @@ const ReviewScreen = () => {
       amount: parsedAmount,
       date,
       note: note || undefined,
+      tripId: tripId ?? undefined,
     });
     if (params.imageUri) {
       const saved = await saveImage(params.imageUri, bill.id);
@@ -167,6 +175,31 @@ const ReviewScreen = () => {
             OCR confidence: {Math.round(parseFloat(params.ocrConfidence) * 100)}%
           </Text>
         )}
+
+        {/* Trip picker */}
+        {trips.length > 0 && (
+          <View style={styles.tripSection}>
+            <Text style={styles.tripLabel}>Chuyến đi</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tripScroll}>
+              <Pressable
+                style={[styles.tripChip, !tripId && styles.tripChipActive]}
+                onPress={() => setTripId(null)}
+              >
+                <Text style={[styles.tripChipText, !tripId && styles.tripChipTextActive]}>Không</Text>
+              </Pressable>
+              {trips.map((t) => (
+                <Pressable
+                  key={t.id}
+                  style={[styles.tripChip, tripId === t.id && styles.tripChipActive]}
+                  onPress={() => setTripId(t.id)}
+                >
+                  <View style={[styles.tripDot, { backgroundColor: t.coverColor }]} />
+                  <Text style={[styles.tripChipText, tripId === t.id && styles.tripChipTextActive]}>{t.name}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        )}
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
@@ -226,6 +259,18 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   ocrText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  tripSection: { marginTop: spacing.xl },
+  tripLabel: { fontSize: 12, fontWeight: '500', color: colors.textSecondary, marginBottom: 8 },
+  tripScroll: { marginHorizontal: -spacing.xl, paddingHorizontal: spacing.xl },
+  tripChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    paddingVertical: 8, paddingHorizontal: 14,
+    borderRadius: 999, backgroundColor: colors.bgSunken, marginRight: 8,
+  },
+  tripChipActive: { backgroundColor: colors.accentSoft, borderWidth: 1.5, borderColor: colors.accent },
+  tripChipText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
+  tripChipTextActive: { color: colors.accent },
+  tripDot: { width: 8, height: 8, borderRadius: 4 },
 });
 
 export default ReviewScreen;

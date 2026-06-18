@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { View, Text, Alert, Pressable, Image, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,7 @@ import { haptics } from '@/utils/haptics';
 
 const ScanScreen = () => {
   const router = useRouter();
+  const { tripId } = useLocalSearchParams<{ tripId?: string }>();
   const insets = useSafeAreaInsets();
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
@@ -39,7 +40,7 @@ const ScanScreen = () => {
 
   const confirmImage = () => {
     if (!previewUri) return;
-    router.push({ pathname: '/review', params: { imageUri: previewUri } });
+    router.push({ pathname: '/review', params: { imageUri: previewUri, ...(tripId ? { tripId } : {}) } });
     setPreviewUri(null);
   };
 
