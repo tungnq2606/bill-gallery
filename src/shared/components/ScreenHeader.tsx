@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Platform, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { typography, colors, spacing } from '@/shared/theme';
 
@@ -12,9 +12,12 @@ interface ScreenHeaderProps {
 
 const ScreenHeader = ({ title, large = false, leftIcon, rightIcon, onBack }: ScreenHeaderProps) => {
   const insets = useSafeAreaInsets();
+  // Pushed screens (with back button) use minimal top padding
+  // Tab/root screens need full safe area inset
+  const topPadding = onBack ? Platform.select({ ios: 8, android: 8 }) ?? 8 : insets.top;
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top }]}>
+    <View style={[styles.header, { paddingTop: topPadding }]}>
       {onBack && leftIcon && (
         <Pressable style={styles.iconBtn} onPress={onBack}>{leftIcon}</Pressable>
       )}
@@ -35,3 +38,4 @@ const styles = StyleSheet.create({
 });
 
 export default ScreenHeader;
+
