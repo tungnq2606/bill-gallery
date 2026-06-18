@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
-import { View, Text, Alert, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Alert, Pressable, Image, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Button } from '@/shared/components';
-import { colors, typography, spacing } from '@/shared/theme';
+import { colors, typography, spacing, radius } from '@/shared/theme';
 import { haptics } from '@/utils/haptics';
 
 const ScanScreen = () => {
@@ -14,6 +14,7 @@ const ScanScreen = () => {
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [capturing, setCapturing] = useState(false);
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
 
   const capture = async () => {
     if (!cameraRef.current || capturing) return;
@@ -22,7 +23,7 @@ const ScanScreen = () => {
     const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
     setCapturing(false);
     if (photo) {
-      router.push({ pathname: '/review', params: { imageUri: photo.uri } });
+      setPreviewUri(photo.uri);
     }
   };
 
@@ -37,9 +38,40 @@ const ScanScreen = () => {
       quality: 0.8,
     });
     if (!result.canceled && result.assets.length > 0) {
-      router.push({ pathname: '/review', params: { imageUri: result.assets[0].uri } });
+      setPreviewUri(result.assets[0].uri);
     }
   };
+
+  const confirmImage = () => {
+    if (!previewUri) return;
+    router.push({ pathname: '/review', params: { imageUri: previewUri } });
+    setPreviewUri(null);
+  };
+
+  const retake = () => {
+    setPreviewUri(null);
+  };
+
+  // Image preview mode
+  if (previewUri) {
+    return (
+      <View style={styles.container}>
+        <Image source={{ uri: previewUri }} style={StyleSheet.absoluteFill} resizeMode="contain" />
+        <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+          <View style={styles.headerSpacer} />
+          <Button title="Đóng" variant="ghost" size="sm" onPress={() => router.back()} />
+        </View>
+        <View style={[styles.previewFooter, { paddingBottom: insets.bottom + 20 }]}>
+          <Pressable style={styles.retakeBtn} onPress={retake}>
+            <Text style={styles.retakeText}>Chụp lại</Text>
+          </Pressable>
+          <Pressable style={styles.confirmBtn} onPress={confirmImage}>
+            <Text style={styles.confirmText}>Dùng ảnh này</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
 
   // Permission not granted yet
   if (!permission?.granted) {
@@ -48,11 +80,15 @@ const ScanScreen = () => {
         <Text style={styles.permIcon}>📷</Text>
         <Text style={styles.permText}>Cần quyền camera để chụp hóa đơn</Text>
         <Button title="Cho phép" variant="primary" onPress={requestPermission} />
+        <View style={{ height: 8 }} />
+        <Button title="Chọn từ thư viện" variant="secondary" onPress={pickImage} />
+        <View style={{ height: 4 }} />
         <Button title="Đóng" variant="ghost" size="sm" onPress={() => router.back()} />
       </View>
     );
   }
 
+  // Camera mode
   return (
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" />
@@ -128,6 +164,23 @@ const styles = StyleSheet.create({
     width: '100%', height: '100%', borderRadius: 30,
     backgroundColor: '#fff',
   },
+  // Preview mode
+  previewFooter: {
+    position: 'absolute', bottom: 0, left: 0, right: 0,
+    flexDirection: 'row', justifyContent: 'space-between',
+    paddingHorizontal: spacing.xl, paddingVertical: spacing.xl,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+  retakeBtn: {
+    paddingVertical: 14, paddingHorizontal: 28,
+    borderRadius: radius.md, borderWidth: 1.5, borderColor: '#fff',
+  },
+  retakeText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  confirmBtn: {
+    paddingVertical: 14, paddingHorizontal: 28,
+    borderRadius: radius.md, backgroundColor: colors.accent,
+  },
+  confirmText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });
 
 export default ScanScreen;
