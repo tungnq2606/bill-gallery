@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 SplashScreen.preventAutoHideAsync();
+
+const ONBOARDING_KEY = 'bill-gallery:onboarded';
 
 const RootLayout = () => {
   const [fontsLoaded] = useFonts({
@@ -15,18 +18,33 @@ const RootLayout = () => {
     'Outfit-ExtraBold': require('@/assets/fonts/Outfit-ExtraBold.ttf'),
   });
 
+  const [isReady, setIsReady] = useState(false);
+  const [hasOnboarded, setHasOnboarded] = useState(false);
+
   useEffect(() => {
-    if (fontsLoaded) {
+    const checkOnboarding = async () => {
+      const value = await AsyncStorage.getItem(ONBOARDING_KEY);
+      setHasOnboarded(value === 'true');
+      setIsReady(true);
+    };
+    checkOnboarding();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && isReady) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, isReady]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !isReady) return null;
 
   return (
     <>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
+        {!hasOnboarded && (
+          <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
+        )}
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="scan" options={{ presentation: 'fullScreenModal' }} />
         <Stack.Screen name="review" />
