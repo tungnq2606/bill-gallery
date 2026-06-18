@@ -97,7 +97,7 @@ const ReviewScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScreenHeader
         title="Xem lại"
         leftIcon={<BackIcon />}
@@ -215,7 +215,8 @@ const styles = StyleSheet.create({
   },
   footer: { padding: spacing.xl, gap: 10, borderTopWidth: 1, borderTopColor: colors.separator },
   imagePreview: {
-    height: 300, borderRadius: radius.md, overflow: 'hidden',
+    height: 340, overflow: 'hidden',
+    marginHorizontal: -spacing.xl, marginTop: -spacing.xl,
     marginBottom: spacing.xl, backgroundColor: colors.grey200,
   },
   previewImage: { width: '100%', height: '100%' },
