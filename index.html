@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Bill Gallery</title>
+<meta name="description" content="A personal gallery for saving bills and splitting expenses">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   BILL GALLERY — DESIGN SYSTEM
+   Design Read: Redesign of personal mobile utility app.
+   Clean/minimal/premium consumer. Native iOS feel.
+   VARIANCE: 5 | MOTION: 4 | DENSITY: 3
+   ================================================================ */
+
+/* --- Reset --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
+input { border: none; outline: none; background: none; font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* --- Design Tokens --- */
+:root {
+  /* Typography */
+  --font-display: 'Outfit', -apple-system, 'SF Pro Display', system-ui, sans-serif;
+  --font-ui: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Menlo', monospace;
+
+  /* Color — Cool neutrals + Indigo accent */
+  --white: #FFFFFF;
+  --grey-50: #F8F9FA;
+  --grey-100: #F1F3F5;
+  --grey-200: #E9ECEF;
+  --grey-300: #DEE2E6;
+  --grey-400: #ADB5BD;
+  --grey-500: #868E96;
+  --grey-600: #6B7280;
+  --grey-700: #495057;
+  --grey-800: #343A40;
+  --grey-900: #1A1D26;
+
+  --indigo-50: #EDF2FF;
+  --indigo-100: #DBE4FF;
+  --indigo-200: #BAC8FF;
+  --indigo-500: #4C6EF5;
+  --indigo-600: #3B5BDB;
+  --indigo-700: #364FC7;
+
+  --green-50: #EBFBEE;
+  --green-100: #D3F9D8;
+  --green-500: #40C057;
+  --green-600: #2F9E44;
+  --green-700: #2B8A3E;
+
+  --orange-50: #FFF4E6;
+  --orange-100: #FFE8CC;
+  --orange-500: #FF922B;
+  --orange-600: #F76707;
+
+  --red-500: #FA5252;
+
+  /* Semantic */
+  --bg-page: var(--grey-50);
+  --bg-card: var(--white);
+  --bg-elevated: var(--white);
+  --bg-sunken: var(--grey-100);
+  --bg-overlay: rgba(0, 0, 0, 0.4);
+
+  --text-primary: var(--grey-900);
+  --text-secondary: var(--grey-600);
+  --text-tertiary: var(--grey-400);
+  --text-on-accent: var(--white);
+  --text-accent: var(--indigo-600);
+
+  --accent: var(--indigo-600);
+  --accent-hover: var(--indigo-700);
+  --accent-soft: var(--indigo-50);
+  --accent-soft-text: var(--indigo-700);
+
+  --paid: var(--green-600);
+  --paid-bg: var(--green-50);
+  --unpaid: var(--orange-600);
+  --unpaid-bg: var(--orange-50);
+
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.1);
+  --separator: rgba(0, 0, 0, 0.05);
+
+  /* Spacing (4px base) */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+
+  /* Radius — consistent 16px system */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+  --r-full: 999px;
+
+  /* Shadow — soft, neutral-tinted */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.03);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 8px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.08);
+  --shadow-fab: 0 4px 12px rgba(59,91,219,0.3), 0 8px 24px rgba(59,91,219,0.2);
+  --shadow-sheet: 0 -4px 32px rgba(0,0,0,0.12);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.5, 1);
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+}
+
+/* --- Page Shell --- */
+html, body { height: 100%; }
+body {
+  background: #E8E9ED;
+  background-image: radial-gradient(ellipse 120% 90% at 50% 0%, #F0F1F4 0%, #DDDEE3 100%);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 16px;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Phone Frame --- */
+.phone {
+  width: 390px; height: 844px;
+  background: var(--bg-page);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08),
+              0 20px 60px rgba(0,0,0,0.15),
+              0 4px 16px rgba(0,0,0,0.08),
+              inset 0 0 0 1px rgba(255,255,255,0.5);
+}
+.phone::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 34px;
+  background: #000; border-radius: 0 0 20px 20px;
+  z-index: 100;
+}
+
+/* --- Screen Container --- */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  background: var(--bg-page);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+  transform: translateX(20px);
+}
+.screen.active {
+  opacity: 1; pointer-events: auto; transform: translateX(0);
+}
+.screen.slide-out {
+  opacity: 0; transform: translateX(-20px);
+}
+
+/* --- Scrollable Content --- */
+.scroll-area {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ================================================================
+   TYPOGRAPHY
+   Display: Outfit (personality for amounts/headings)
+   UI: System font (native feel for body/controls)
+   ================================================================ */
+
+.t-display-xl { font: 800 42px/1.05 var(--font-display); letter-spacing: -0.03em; }
+.t-display-lg { font: 700 32px/1.1 var(--font-display); letter-spacing: -0.02em; }
+.t-display-md { font: 700 24px/1.15 var(--font-display); letter-spacing: -0.02em; }
+.t-title { font: 700 20px/1.2 var(--font-display); letter-spacing: -0.01em; }
+.t-headline { font: 600 16px/1.3 var(--font-ui); }
+.t-body { font: 400 15px/1.5 var(--font-ui); }
+.t-body-medium { font: 500 15px/1.5 var(--font-ui); }
+.t-callout { font: 500 14px/1.4 var(--font-ui); }
+.t-caption { font: 500 12px/1.35 var(--font-ui); }
+.t-micro { font: 600 11px/1.3 var(--font-ui); letter-spacing: 0.04em; text-transform: uppercase; }
+.t-amount { font-variant-numeric: tabular-nums lining-nums; }
+
+/* --- Colors --- */
+.c-primary { color: var(--text-primary); }
+.c-secondary { color: var(--text-secondary); }
+.c-tertiary { color: var(--text-tertiary); }
+.c-accent { color: var(--text-accent); }
+.c-paid { color: var(--paid); }
+.c-unpaid { color: var(--unpaid); }
+.c-white { color: white; }
+
+/* ================================================================
+   COMPONENTS
+   ================================================================ */
+
+/* --- Button --- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 50px; padding: 0 24px;
+  border-radius: var(--r-md);
+  font: 600 16px/1 var(--font-ui);
+  transition: all var(--dur-fast) var(--ease);
+  user-select: none; white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: var(--text-on-accent); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--bg-sunken); color: var(--text-primary); }
+.btn-ghost { background: transparent; color: var(--text-accent); }
+.btn-outline {
+  background: transparent; color: var(--text-primary);
+  border: 1.5px solid var(--border-strong);
+}
+.btn-full { width: 100%; }
+.btn-sm { height: 38px; padding: 0 16px; font-size: 14px; border-radius: var(--r-sm); }
+.btn-pill { border-radius: var(--r-full); }
+.btn-danger { background: transparent; color: var(--red-500); }
+
+/* --- Chip --- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 14px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-full);
+  background: var(--bg-card);
+  font: 500 13px/1 var(--font-ui);
+  color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease);
+}
+.chip:active { transform: scale(0.96); }
+.chip.selected {
+  background: var(--grey-900); border-color: var(--grey-900);
+  color: white; font-weight: 600;
+}
+
+/* --- Avatar --- */
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--r-full);
+  color: white; font-weight: 700;
+  font-family: var(--font-ui); user-select: none;
+  flex-shrink: 0;
+}
+.avatar-sm { width: 32px; height: 32px; font-size: 12px; }
+.avatar-md { width: 40px; height: 40px; font-size: 14px; }
+.avatar-lg { width: 48px; height: 48px; font-size: 16px; }
+
+/* --- Card --- */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.card-lg { border-radius: var(--r-lg); }
+.card-pressable {
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.card-pressable:active { transform: scale(0.98); }
+
+/* --- Badge --- */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 22px; padding: 0 8px;
+  border-radius: var(--r-full);
+  font: 600 11px/1 var(--font-ui);
+  white-space: nowrap;
+}
+.badge-paid { background: var(--paid-bg); color: var(--paid); }
+.badge-unpaid { background: var(--unpaid-bg); color: var(--unpaid); }
+.badge-accent { background: var(--accent-soft); color: var(--accent-soft-text); }
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; flex-shrink: 0;
+}
+
+/* --- Status Dot (for gallery tiles) --- */
+.status-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.status-dot-paid { background: var(--green-500); }
+.status-dot-unpaid { background: var(--orange-500); }
+
+/* --- Segmented Control --- */
+.seg {
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--bg-sunken);
+  border-radius: var(--r-sm);
+}
+.seg-item {
+  flex: 1; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  font: 600 13px/1 var(--font-ui);
+  color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease);
+}
+.seg-item.active {
+  background: var(--bg-card); color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- FAB --- */
+.fab {
+  position: absolute; bottom: 84px; right: 20px;
+  width: 58px; height: 58px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: white;
+  border-radius: var(--r-full);
+  box-shadow: var(--shadow-fab);
+  z-index: 30;
+  transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-fast) var(--ease);
+}
+.fab:active { transform: scale(0.9); }
+.fab:hover { background: var(--accent-hover); }
+.fab svg { width: 26px; height: 26px; }
+
+/* --- Tab Bar --- */
+.tabbar {
+  display: flex; align-items: stretch;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: saturate(1.6) blur(20px);
+  -webkit-backdrop-filter: saturate(1.6) blur(20px);
+  border-top: 1px solid var(--separator);
+  padding: 6px 0 20px;
+  flex-shrink: 0;
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 3px; padding: 4px 0;
+  color: var(--text-tertiary);
+  font: 600 10px/1 var(--font-ui);
+  transition: color var(--dur-fast) var(--ease);
+}
+.tab-item.active { color: var(--accent); }
+.tab-item svg { width: 24px; height: 24px; }
+
+/* --- Bottom Sheet --- */
+.sheet-backdrop {
+  position: absolute; inset: 0;
+  background: var(--bg-overlay); z-index: 50;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease);
+}
+.sheet-backdrop.show { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 51;
+  background: var(--bg-elevated);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  box-shadow: var(--shadow-sheet);
+  padding: 8px 20px 28px;
+  transform: translateY(100%);
+  transition: transform var(--dur-slow) var(--ease);
+}
+.sheet.show { transform: translateY(0); }
+.sheet-grab {
+  width: 36px; height: 4px;
+  border-radius: var(--r-full);
+  background: var(--grey-300);
+  margin: 4px auto 16px;
+}
+.sheet-title {
+  font: 700 20px/1.2 var(--font-display);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+/* --- List Row --- */
+.list-row {
+  display: flex; align-items: center; gap: 14px;
+  min-height: 56px; padding: 10px 0;
+  transition: background var(--dur-fast) var(--ease);
+}
+.list-row + .list-row { border-top: 1px solid var(--separator); }
+.list-row-body { flex: 1; min-width: 0; }
+.list-row-title { font: 600 15px/1.3 var(--font-ui); }
+.list-row-sub { font: 400 13px/1.3 var(--font-ui); color: var(--text-secondary); }
+.list-row-trail { flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+
+/* --- Section Label --- */
+.section-label {
+  font: 600 11px/1 var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* --- Input Field --- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font: 500 12px/1 var(--font-ui); color: var(--text-secondary); }
+.field-box {
+  display: flex; align-items: center; gap: 10px;
+  height: 48px; padding: 0 14px;
+  background: var(--bg-sunken);
+  border: 1.5px solid transparent;
+  border-radius: var(--r-sm);
+  transition: all var(--dur-fast) var(--ease);
+}
+.field-box:focus-within { border-color: var(--accent); background: var(--bg-card); }
+.field-input {
+  flex: 1; min-width: 0;
+  font: 500 15px/1 var(--font-ui);
+}
+.field-input::placeholder { color: var(--text-tertiary); }
+.field-icon { color: var(--text-tertiary); flex-shrink: 0; }
+
+/* --- Amount Hero --- */
+.amount-hero {
+  text-align: center; padding: 20px;
+  background: var(--accent-soft);
+  border-radius: var(--r-md);
+}
+.amount-hero-value {
+  font: 800 40px/1.05 var(--font-display);
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.amount-hero-currency {
+  font: 700 24px/1 var(--font-display);
+  color: var(--text-tertiary);
+}
+.amount-hero-label {
+  font: 500 13px/1 var(--font-ui);
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ================================================================
+   GALLERY TILE — Photo-gallery style bill cards
+   ================================================================ */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  padding: 0 3px;
+}
+.gallery-tile {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.gallery-tile:active { transform: scale(0.96); }
+.gallery-tile-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  background: var(--grey-200);
+}
+.gallery-tile-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.5) 100%);
+  pointer-events: none;
+}
+.gallery-tile-meta {
+  position: absolute; left: 8px; right: 8px; bottom: 6px;
+  color: white;
+}
+.gallery-tile-amount {
+  font: 700 14px/1.2 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.gallery-tile-name {
+  font: 500 10px/1.3 var(--font-ui);
+  opacity: 0.85;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.gallery-tile-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.9);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* --- Receipt CSS Art (for gallery thumbnails) --- */
+.receipt-art {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  padding: 12px 10px 8px;
+  font-family: var(--font-mono);
+  font-size: 6px; line-height: 1.5;
+  color: var(--grey-700);
+  letter-spacing: 0;
+}
+.receipt-art-bg-warm { background: linear-gradient(145deg, #E8DFD1 0%, #D4CBBC 100%); }
+.receipt-art-bg-cool { background: linear-gradient(145deg, #DDE3EC 0%, #CDD3DC 100%); }
+.receipt-art-bg-sage { background: linear-gradient(145deg, #D4DFD4 0%, #C4CFC4 100%); }
+.receipt-art-bg-rose { background: linear-gradient(145deg, #E8D8DB 0%, #D8C8CB 100%); }
+.receipt-art-bg-blue { background: linear-gradient(145deg, #D0DEF0 0%, #BFD0E4 100%); }
+.receipt-art-bg-cream { background: linear-gradient(145deg, #EBE5D8 0%, #DDD7CA 100%); }
+
+.receipt-paper {
+  background: white;
+  border-radius: 3px;
+  padding: 8px 6px 6px;
+  flex: 1;
+  display: flex; flex-direction: column;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+.receipt-paper-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 7px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.receipt-paper-addr {
+  text-align: center;
+  font-size: 5px;
+  color: var(--grey-500);
+  margin-bottom: 4px;
+}
+.receipt-paper-line {
+  border-top: 1px dashed var(--grey-300);
+  margin: 3px 0;
+}
+.receipt-paper-row {
+  display: flex; justify-content: space-between;
+  font-size: 5.5px; line-height: 1.6;
+}
+.receipt-paper-total {
+  display: flex; justify-content: space-between;
+  font-weight: 700; font-size: 7px;
+  margin-top: 2px;
+}
+
+/* --- Bank Transfer Art --- */
+.transfer-art {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  padding: 12px 10px 8px;
+}
+.transfer-card {
+  flex: 1;
+  background: white;
+  border-radius: 6px;
+  padding: 10px 8px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.transfer-check {
+  width: 18px; height: 18px;
+  background: var(--green-500);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+}
+.transfer-check svg { width: 10px; height: 10px; color: white; }
+.transfer-label {
+  font: 500 5px/1 var(--font-ui);
+  color: var(--green-600);
+  margin-bottom: 4px;
+}
+.transfer-amount {
+  font: 800 11px/1 var(--font-display);
+  color: var(--grey-900);
+  margin-bottom: 6px;
+}
+.transfer-row {
+  display: flex; justify-content: space-between;
+  width: 100%; font-size: 5px; line-height: 1.8;
+  color: var(--grey-600);
+}
+
+/* ================================================================
+   ONBOARDING
+   ================================================================ */
+.onboarding {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  background: var(--white);
+  z-index: 200;
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+.onboarding.hide {
+  opacity: 0; pointer-events: none;
+  transform: scale(1.05);
+}
+.onboarding-visual {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 60px 24px 0;
+  overflow: hidden;
+}
+.onboarding-content {
+  padding: 32px 28px 0;
+}
+.onboarding-title {
+  font: 800 28px/1.15 var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.onboarding-desc {
+  font: 400 15px/1.55 var(--font-ui);
+  color: var(--text-secondary);
+  max-width: 300px;
+}
+.onboarding-footer {
+  padding: 24px 28px 40px;
+  display: flex; flex-direction: column; gap: 12px;
+  align-items: center;
+}
+.onboarding-dots {
+  display: flex; gap: 6px;
+  margin-bottom: 8px;
+}
+.onboarding-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--grey-300);
+  transition: all var(--dur-base) var(--ease);
+}
+.onboarding-dot.active {
+  background: var(--accent);
+  width: 20px; border-radius: 4px;
+}
+.onboarding-skip {
+  font: 500 14px/1 var(--font-ui);
+  color: var(--text-tertiary);
+  padding: 8px;
+}
+
+/* --- Onboarding Illustrations --- */
+.onboard-illust {
+  position: relative;
+  width: 280px; height: 280px;
+}
+.onboard-receipt {
+  position: absolute;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06);
+  transition: transform 0.6s var(--ease);
+}
+.onboard-receipt:nth-child(1) {
+  width: 140px; height: 190px;
+  left: 0; top: 40px;
+  transform: rotate(-4deg);
+}
+.onboard-receipt:nth-child(2) {
+  width: 140px; height: 190px;
+  right: 0; top: 20px;
+  transform: rotate(3deg);
+}
+.onboard-receipt:nth-child(3) {
+  width: 120px; height: 160px;
+  left: 50%; top: 0;
+  transform: translateX(-50%) rotate(-1deg);
+}
+
+/* ================================================================
+   GALLERY HOME — Nav bar, filter chips, grid, FAB, tab bar
+   ================================================================ */
+.gallery-header {
+  padding: 54px 20px 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.gallery-title {
+  font: 800 28px/1.1 var(--font-display);
+  letter-spacing: -0.02em;
+}
+.gallery-search-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-full);
+  color: var(--text-secondary);
+  transition: background var(--dur-fast) var(--ease);
+}
+.gallery-search-btn:hover { background: var(--bg-sunken); }
+
+.gallery-filters {
+  display: flex; gap: 8px;
+  padding: 14px 20px 12px;
+  overflow-x: auto;
+}
+.gallery-filters::-webkit-scrollbar { display: none; }
+
+.gallery-month-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+.gallery-month-label {
+  font: 600 13px/1 var(--font-ui);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.gallery-month-total {
+  font: 600 13px/1 var(--font-ui);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================
+   BILL DETAIL
+   ================================================================ */
+.detail-header {
+  position: relative;
+  height: 300px;
+  background: var(--grey-200);
+  overflow: hidden;
+}
+.detail-header-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.detail-back {
+  position: absolute; top: 50px; left: 16px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
+  border-radius: var(--r-full);
+  color: white; z-index: 10;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.detail-back:active { transform: scale(0.9); }
+.detail-info {
+  padding: 20px;
+}
+.detail-amount {
+  font: 800 36px/1.05 var(--font-display);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+.detail-merchant {
+  font: 600 17px/1.3 var(--font-ui);
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.detail-meta {
+  font: 400 14px/1.4 var(--font-ui);
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.detail-section {
+  padding: 0 20px; margin-bottom: 20px;
+}
+.detail-section-title {
+  font: 600 11px/1 var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+.detail-actions {
+  display: flex; gap: 10px;
+  padding: 12px 20px 32px;
+}
+
+/* --- Person Row --- */
+.person-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-radius: var(--r-md);
+  margin-bottom: 6px;
+}
+.person-row-info { flex: 1; min-width: 0; }
+.person-row-name { font: 600 15px/1.3 var(--font-ui); }
+.person-row-sub { font: 400 12px/1.3 var(--font-ui); color: var(--text-secondary); }
+.person-row-amount {
+  font: 700 15px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================
+   SPLIT BILL
+   ================================================================ */
+.split-header {
+  padding: 54px 20px 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.split-back {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-full);
+  color: var(--text-primary);
+  transition: background var(--dur-fast) var(--ease);
+}
+.split-back:active { background: var(--bg-sunken); }
+
+.split-payer {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 0 20px 12px;
+}
+.split-payer::-webkit-scrollbar { display: none; }
+
+.payer-chip {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  transition: all var(--dur-fast) var(--ease);
+  min-width: 56px;
+}
+.payer-chip.selected { background: var(--accent-soft); }
+.payer-chip-name {
+  font: 500 11px/1 var(--font-ui);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.payer-chip.selected .payer-chip-name { color: var(--accent-soft-text); font-weight: 600; }
+
+.split-participants {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 8px 20px 16px;
+}
+.participant-chip {
+  display: flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 12px 0 4px;
+  border-radius: var(--r-full);
+  border: 1.5px solid var(--border-strong);
+  background: var(--bg-card);
+  font: 500 13px/1 var(--font-ui);
+  color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease);
+}
+.participant-chip.selected {
+  background: var(--grey-900);
+  border-color: var(--grey-900);
+  color: white;
+}
+
+.split-amounts {
+  padding: 0 20px;
+}
+
+.summary-card {
+  background: var(--bg-card);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  margin: 0 20px 16px;
+  border-left: 3px solid var(--unpaid);
+}
+.summary-card.settled { border-left-color: var(--paid); }
+.summary-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 0;
+  font: 400 14px/1.5 var(--font-ui);
+}
+.summary-item-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   TRIPS
+   ================================================================ */
+.trip-card {
+  background: var(--bg-card);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.trip-card:active { transform: scale(0.98); }
+.trip-cover {
+  height: 140px;
+  background: linear-gradient(135deg, var(--indigo-500) 0%, var(--indigo-700) 100%);
+  display: flex; align-items: flex-end;
+  padding: 16px;
+}
+.trip-cover-title {
+  font: 700 22px/1.15 var(--font-display);
+  color: white;
+  letter-spacing: -0.01em;
+}
+.trip-body { padding: 14px 16px; }
+.trip-dates {
+  font: 400 13px/1 var(--font-ui);
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+.trip-stats {
+  display: flex; gap: 20px;
+}
+.trip-stat-value {
+  font: 700 17px/1.2 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.trip-stat-label {
+  font: 400 11px/1 var(--font-ui);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ================================================================
+   SUMMARY
+   ================================================================ */
+.summary-hero-card {
+  background: linear-gradient(135deg, var(--indigo-600) 0%, var(--indigo-500) 100%);
+  border-radius: var(--r-lg);
+  padding: 24px 20px;
+  color: white;
+  margin-bottom: 16px;
+}
+.summary-hero-label {
+  font: 500 13px/1 var(--font-ui);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+.summary-hero-amount {
+  font: 800 36px/1.05 var(--font-display);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.summary-hero-sub {
+  font: 400 14px/1 var(--font-ui);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.summary-stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 20px;
+}
+.summary-stat-card {
+  background: var(--bg-card);
+  border-radius: var(--r-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.summary-stat-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+}
+.summary-stat-value {
+  font: 700 20px/1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 2px;
+}
+.summary-stat-label {
+  font: 400 12px/1 var(--font-ui);
+  color: var(--text-secondary);
+}
+
+/* ================================================================
+   SCAN SCREEN
+   ================================================================ */
+.scan-screen {
+  background: #0A0A0A;
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  z-index: 100;
+}
+.scan-viewfinder {
+  flex: 1; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.scan-frame {
+  width: 260px; height: 340px;
+  position: relative;
+}
+.scan-corner {
+  position: absolute;
+  width: 24px; height: 24px;
+  border: 3px solid var(--indigo-500);
+}
+.scan-corner-tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+.scan-corner-tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 4px 0 0; }
+.scan-corner-bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 4px; }
+.scan-corner-br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+.scan-hint {
+  position: absolute; bottom: -36px; left: 0; right: 0;
+  text-align: center;
+  font: 400 14px/1 var(--font-ui);
+  color: rgba(255,255,255,0.6);
+}
+.scan-controls {
+  padding: 24px 40px 44px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.scan-shutter {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--dur-fast) var(--ease);
+}
+.scan-shutter:active {
+  background: rgba(255,255,255,0.3);
+  transform: scale(0.92);
+}
+.scan-shutter-inner {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: white;
+}
+.scan-side-btn {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  border-radius: var(--r-full);
+}
+.scan-top-bar {
+  position: absolute; top: 50px; left: 16px; right: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 10;
+}
+
+/* ================================================================
+   REVIEW SCAN
+   ================================================================ */
+.review-receipt-preview {
+  position: relative;
+  margin: 0 20px 16px;
+  height: 180px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--grey-200);
+}
+.review-receipt-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.review-receipt-actions {
+  position: absolute; bottom: 8px; right: 8px;
+  display: flex; gap: 6px;
+}
+.review-receipt-action {
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+}
+.review-form {
+  padding: 0 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.review-bill-type {
+  padding: 0 20px; margin-top: 8px;
+}
+.review-footer {
+  padding: 16px 20px 32px;
+}
+.review-hint {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: var(--accent-soft);
+  border-radius: var(--r-sm);
+  margin: 8px 20px 0;
+  font: 400 13px/1.4 var(--font-ui);
+  color: var(--accent-soft-text);
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.anim-fade-in {
+  animation: fadeIn var(--dur-base) var(--ease) both;
+}
+.anim-scale-in {
+  animation: scaleIn var(--dur-base) var(--ease) both;
+}
+</style>
+</head>
+<body>
+
+<div class="phone" id="app">
+
+<!-- ============================================================
+     ONBOARDING
+     ============================================================ -->
+<div class="onboarding" id="onboarding">
+  <div class="onboarding-visual" id="onboard-visual">
+    <!-- Illustration changes per step -->
+  </div>
+  <div class="onboarding-content">
+    <div class="onboarding-title" id="onboard-title">A gallery for your bills</div>
+    <div class="onboarding-desc" id="onboard-desc">Save every paper receipt and bank transfer as a photo you can actually find.</div>
+  </div>
+  <div class="onboarding-footer">
+    <div class="onboarding-dots" id="onboard-dots">
+      <div class="onboarding-dot active"></div>
+      <div class="onboarding-dot"></div>
+      <div class="onboarding-dot"></div>
+    </div>
+    <button class="btn btn-primary btn-full btn-pill" id="onboard-next" onclick="nextOnboarding()">Continue</button>
+    <button class="onboarding-skip" onclick="skipOnboarding()">Skip</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     GALLERY HOME
+     ============================================================ -->
+<div class="screen active" id="screen-gallery">
+  <div class="gallery-header">
+    <div class="gallery-title">Gallery</div>
+    <button class="gallery-search-btn" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </div>
+
+  <div class="gallery-filters" id="gallery-filters">
+    <button class="chip selected" data-filter="all">All</button>
+    <button class="chip" data-filter="unpaid">Unpaid</button>
+    <button class="chip" data-filter="receipts">Receipts</button>
+    <button class="chip" data-filter="transfers">Transfers</button>
+  </div>
+
+  <div class="scroll-area" id="gallery-scroll">
+    <div class="gallery-month-header">
+      <span class="gallery-month-label">June 2026</span>
+      <span class="gallery-month-total">1.55M ₫</span>
+    </div>
+    <div class="gallery-grid" id="gallery-grid-june">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="gallery-month-header">
+      <span class="gallery-month-label">May 2026</span>
+      <span class="gallery-month-total">2.17M ₫</span>
+    </div>
+    <div class="gallery-grid" id="gallery-grid-may">
+      <!-- Filled by JS -->
+    </div>
+    <div style="height: 80px;"></div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" onclick="showSheet()" aria-label="Add bill">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+
+  <!-- Tab Bar -->
+  <div class="tabbar">
+    <button class="tab-item active" onclick="showScreen('gallery')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Gallery
+    </button>
+    <button class="tab-item" onclick="showScreen('trips')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Trips
+    </button>
+    <button class="tab-item" onclick="showScreen('summary')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Summary
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     BILL DETAIL
+     ============================================================ -->
+<div class="screen" id="screen-detail">
+  <div class="scroll-area">
+    <div class="detail-header" id="detail-header-img">
+      <button class="detail-back" onclick="showScreen('gallery')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    </div>
+    <div class="detail-info">
+      <div class="detail-amount" id="detail-amount">147.000 ₫</div>
+      <div class="detail-merchant" id="detail-merchant">Phở Gánh</div>
+      <div class="detail-meta" id="detail-meta">2 Jun 2026 · Hoàn Kiếm, Hà Nội</div>
+      <div>
+        <span class="badge badge-unpaid"><span class="badge-dot"></span> 2 still owe</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Paid by</div>
+      <div class="person-row">
+        <div class="avatar avatar-md" style="background: var(--indigo-500);">TN</div>
+        <div class="person-row-info">
+          <div class="person-row-name">Tùng Nguyễn</div>
+          <div class="person-row-sub">Paid the full amount</div>
+        </div>
+        <div class="person-row-amount">147.000 ₫</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title" style="display: flex; justify-content: space-between;">
+        <span>Split between 3</span>
+        <span style="font-weight: 400; text-transform: none; letter-spacing: 0; font-variant-numeric: tabular-nums;">49.000 ₫ each</span>
+      </div>
+      <div class="person-row" style="border-left: 3px solid var(--paid); padding-left: 11px;">
+        <div class="avatar avatar-md" style="background: var(--indigo-500);">TN</div>
+        <div class="person-row-info">
+          <div class="person-row-name">Tùng Nguyễn</div>
+          <div class="person-row-sub" style="color: var(--paid);">Paid</div>
+        </div>
+        <div class="person-row-amount" style="color: var(--text-secondary);">49.000 ₫</div>
+      </div>
+      <div class="person-row" style="border-left: 3px solid var(--unpaid); padding-left: 11px;">
+        <div class="avatar avatar-md" style="background: #1E9E8E;">NT</div>
+        <div class="person-row-info">
+          <div class="person-row-name">Nam Trần</div>
+          <div class="person-row-sub" style="color: var(--unpaid);">Owes Tùng</div>
+        </div>
+        <div class="person-row-amount" style="color: var(--unpaid);">49.000 ₫</div>
+      </div>
+      <div class="person-row" style="border-left: 3px solid var(--unpaid); padding-left: 11px;">
+        <div class="avatar avatar-md" style="background: #E0635C;">LP</div>
+        <div class="person-row-info">
+          <div class="person-row-name">Linh Phạm</div>
+          <div class="person-row-sub" style="color: var(--unpaid);">Owes Tùng</div>
+        </div>
+        <div class="person-row-amount" style="color: var(--unpaid);">49.000 ₫</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Note</div>
+      <div style="padding: 12px 14px; background: var(--bg-sunken); border-radius: var(--r-sm); font: 400 14px/1.5 var(--font-ui); color: var(--text-secondary);">
+        Lunch before the train
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="btn btn-primary btn-full btn-pill" style="flex: 2;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Mark as paid
+      </button>
+      <button class="btn btn-outline btn-pill" style="flex: 1;">Share</button>
+    </div>
+    <div style="height: 20px;"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TRIPS
+     ============================================================ -->
+<div class="screen" id="screen-trips">
+  <div class="gallery-header">
+    <div class="gallery-title">Trips</div>
+    <button class="gallery-search-btn" aria-label="Add trip">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+  <div class="scroll-area" style="padding: 16px 20px;">
+    <div class="trip-card">
+      <div class="trip-cover" style="background: linear-gradient(135deg, #4C6EF5 0%, #364FC7 60%, #2C46BE 100%);">
+        <div class="trip-cover-title">Đà Lạt Trip</div>
+      </div>
+      <div class="trip-body">
+        <div class="trip-dates">28 May - 1 Jun 2026</div>
+        <div class="trip-stats">
+          <div>
+            <div class="trip-stat-value">4.2M ₫</div>
+            <div class="trip-stat-label">Total spent</div>
+          </div>
+          <div>
+            <div class="trip-stat-value">12</div>
+            <div class="trip-stat-label">Bills</div>
+          </div>
+          <div>
+            <div class="trip-stat-value">5</div>
+            <div class="trip-stat-label">People</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trip-card">
+      <div class="trip-cover" style="background: linear-gradient(135deg, #2F9E44 0%, #2B8A3E 100%);">
+        <div class="trip-cover-title">Hội An Weekend</div>
+      </div>
+      <div class="trip-body">
+        <div class="trip-dates">10 - 12 May 2026</div>
+        <div class="trip-stats">
+          <div>
+            <div class="trip-stat-value">2.8M ₫</div>
+            <div class="trip-stat-label">Total spent</div>
+          </div>
+          <div>
+            <div class="trip-stat-value">8</div>
+            <div class="trip-stat-label">Bills</div>
+          </div>
+          <div>
+            <div class="trip-stat-value">4</div>
+            <div class="trip-stat-label">People</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trip-card">
+      <div class="trip-cover" style="background: linear-gradient(135deg, #E8590C 0%, #D9480F 100%);">
+        <div class="trip-cover-title">Sapa Adventure</div>
+      </div>
+      <div class="trip-body">
+        <div class="trip-dates">1 - 4 Apr 2026</div>
+        <div class="trip-stats">
+          <div>
+            <div class="trip-stat-value">3.5M ₫</div>
+            <div class="trip-stat-label">Total spent</div>
+          </div>
+          <div>
+            <div class="trip-stat-value">15</div>
+            <div class="trip-stat-label">Bills</div>
+          </div>
+          <div>
+            <div class="trip-stat-value">6</div>
+            <div class="trip-stat-label">People</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height: 80px;"></div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tabbar">
+    <button class="tab-item" onclick="showScreen('gallery')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Gallery
+    </button>
+    <button class="tab-item active" onclick="showScreen('trips')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" stroke-width="1.8"/></svg>
+      Trips
+    </button>
+    <button class="tab-item" onclick="showScreen('summary')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Summary
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SUMMARY
+     ============================================================ -->
+<div class="screen" id="screen-summary">
+  <div class="gallery-header">
+    <div class="gallery-title">Summary</div>
+  </div>
+  <div class="scroll-area" style="padding: 20px;">
+    <div class="summary-hero-card">
+      <div class="summary-hero-label">June 2026 spending</div>
+      <div class="summary-hero-amount">1.55M ₫</div>
+      <div class="summary-hero-sub">3 bills saved this month</div>
+    </div>
+
+    <div class="summary-stat-grid">
+      <div class="summary-stat-card">
+        <div class="summary-stat-icon" style="background: var(--unpaid-bg);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--unpaid)" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="summary-stat-value" style="color: var(--unpaid);">196k ₫</div>
+        <div class="summary-stat-label">Others owe you</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-icon" style="background: var(--paid-bg);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--paid)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="summary-stat-value" style="color: var(--paid);">0 ₫</div>
+        <div class="summary-stat-label">You owe others</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-icon" style="background: var(--accent-soft);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <div class="summary-stat-value">12</div>
+        <div class="summary-stat-label">Bills saved</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-icon" style="background: var(--grey-100);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--grey-600)" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/></svg>
+        </div>
+        <div class="summary-stat-value">3</div>
+        <div class="summary-stat-label">Trips</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <div class="section-label" style="margin-bottom: 12px;">Who owes you</div>
+      <div class="card" style="overflow: hidden;">
+        <div class="list-row" style="padding: 12px 16px;">
+          <div class="avatar avatar-md" style="background: #1E9E8E;">NT</div>
+          <div class="list-row-body">
+            <div class="list-row-title">Nam Trần</div>
+            <div class="list-row-sub">From 2 bills</div>
+          </div>
+          <div class="list-row-trail" style="font: 700 15px/1 var(--font-display); color: var(--unpaid); font-variant-numeric: tabular-nums;">
+            98k ₫
+          </div>
+        </div>
+        <div class="list-row" style="padding: 12px 16px;">
+          <div class="avatar avatar-md" style="background: #E0635C;">LP</div>
+          <div class="list-row-body">
+            <div class="list-row-title">Linh Phạm</div>
+            <div class="list-row-sub">From 2 bills</div>
+          </div>
+          <div class="list-row-trail" style="font: 700 15px/1 var(--font-display); color: var(--unpaid); font-variant-numeric: tabular-nums;">
+            98k ₫
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height: 80px;"></div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tabbar">
+    <button class="tab-item" onclick="showScreen('gallery')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Gallery
+    </button>
+    <button class="tab-item" onclick="showScreen('trips')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Trips
+    </button>
+    <button class="tab-item active" onclick="showScreen('summary')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="17" y="10" width="3" height="10" rx="1"/><rect x="10.5" y="4" width="3" height="16" rx="1"/><rect x="4" y="14" width="3" height="6" rx="1"/></svg>
+      Summary
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADD BILL BOTTOM SHEET
+     ============================================================ -->
+<div class="sheet-backdrop" id="sheet-backdrop" onclick="hideSheet()"></div>
+<div class="sheet" id="add-sheet">
+  <div class="sheet-grab"></div>
+  <div class="sheet-title">Add a bill</div>
+  <div style="display: flex; flex-direction: column; gap: 2px;">
+    <button class="list-row" onclick="showScreen('scan'); hideSheet();">
+      <div style="width: 42px; height: 42px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <div class="list-row-body">
+        <div class="list-row-title">Scan paper bill</div>
+        <div class="list-row-sub">Use the camera to capture a receipt</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <button class="list-row">
+      <div style="width: 42px; height: 42px; border-radius: 10px; background: var(--green-50); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-600)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </div>
+      <div class="list-row-body">
+        <div class="list-row-title">Choose from gallery</div>
+        <div class="list-row-sub">Pick a photo you already have</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <button class="list-row">
+      <div style="width: 42px; height: 42px; border-radius: 10px; background: var(--indigo-50); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
+      <div class="list-row-body">
+        <div class="list-row-title">Import transfer screenshot</div>
+        <div class="list-row-sub">Detect amount, recipient & bank</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <button class="list-row">
+      <div style="width: 42px; height: 42px; border-radius: 10px; background: var(--grey-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--grey-600)" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div class="list-row-body">
+        <div class="list-row-title">Add manually</div>
+        <div class="list-row-sub">Enter the details yourself</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCAN SCREEN
+     ============================================================ -->
+<div class="screen" id="screen-scan" style="background: #0A0A0A;">
+  <div class="scan-top-bar">
+    <button class="scan-side-btn" onclick="showScreen('gallery')" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="scan-side-btn" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+    </button>
+  </div>
+  <div class="scan-viewfinder">
+    <div class="scan-frame">
+      <!-- Receipt preview inside frame -->
+      <div style="position: absolute; inset: 12px; background: white; border-radius: 4px; padding: 16px 12px; font-family: var(--font-mono); font-size: 9px; color: var(--grey-700); display: flex; flex-direction: column; box-shadow: 0 2px 12px rgba(0,0,0,0.2);">
+        <div style="text-align: center; font-weight: 700; font-size: 11px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em;">PHỞ GÁNH</div>
+        <div style="text-align: center; font-size: 7px; color: var(--grey-500); margin-bottom: 8px;">12 Hàng Trống, Hoàn Kiếm</div>
+        <div style="border-top: 1px dashed var(--grey-300); margin: 4px 0;"></div>
+        <div style="display: flex; justify-content: space-between; margin: 2px 0;">
+          <span>Phở bò tái</span><span>65.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 2px 0;">
+          <span>Phở gà</span><span>60.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 2px 0;">
+          <span>Quẩy</span><span>10.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 2px 0;">
+          <span>Trà đá x4</span><span>12.000</span>
+        </div>
+        <div style="border-top: 1px dashed var(--grey-300); margin: 6px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 11px;">
+          <span>TỔNG</span><span>147.000 đ</span>
+        </div>
+        <div style="text-align: center; font-size: 6px; color: var(--grey-400); margin-top: auto;">02/06/2026 12:41</div>
+      </div>
+      <div class="scan-corner scan-corner-tl"></div>
+      <div class="scan-corner scan-corner-tr"></div>
+      <div class="scan-corner scan-corner-bl"></div>
+      <div class="scan-corner scan-corner-br"></div>
+      <div class="scan-hint">Position the bill inside the frame</div>
+    </div>
+  </div>
+  <div class="scan-controls">
+    <button class="scan-side-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    </button>
+    <button class="scan-shutter" onclick="showScreen('review')">
+      <div class="scan-shutter-inner"></div>
+    </button>
+    <button class="scan-side-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     REVIEW SCAN RESULT
+     ============================================================ -->
+<div class="screen" id="screen-review">
+  <div class="split-header">
+    <button class="split-back" onclick="showScreen('scan')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="t-title" style="flex: 1;">Review scan</div>
+  </div>
+  <div class="scroll-area">
+    <div class="review-receipt-preview">
+      <div style="width: 100%; height: 100%; background: linear-gradient(145deg, #E8E0D4 0%, #DDD5C8 100%); display: flex; align-items: center; justify-content: center; padding: 12px;">
+        <div style="background: white; border-radius: 6px; padding: 14px 10px; width: 140px; font-family: var(--font-mono); font-size: 7px; color: var(--grey-700); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+          <div style="text-align: center; font-weight: 700; font-size: 9px; text-transform: uppercase;">PHỞ GÁNH</div>
+          <div style="text-align: center; font-size: 5px; color: var(--grey-500); margin-bottom: 4px;">12 Hàng Trống, Hoàn Kiếm</div>
+          <div style="border-top: 1px dashed var(--grey-300); margin: 3px 0;"></div>
+          <div style="display: flex; justify-content: space-between; font-size: 5px;">
+            <span>Phở bò tái</span><span>65.000</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 5px;">
+            <span>Phở gà</span><span>60.000</span>
+          </div>
+          <div style="border-top: 1px dashed var(--grey-300); margin: 3px 0;"></div>
+          <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 7px;">
+            <span>TỔNG</span><span>147.000 đ</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-receipt-actions">
+        <button class="review-receipt-action">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 3 21 3 21 8"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </button>
+        <button class="review-receipt-action">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div style="padding: 0 20px; margin-bottom: 16px;">
+      <div class="amount-hero">
+        <div style="display: flex; align-items: baseline; justify-content: center; gap: 6px;">
+          <div class="amount-hero-value">147.000</div>
+          <div class="amount-hero-currency">₫</div>
+        </div>
+        <div class="amount-hero-label">Total amount</div>
+      </div>
+    </div>
+
+    <div class="review-form">
+      <div class="field">
+        <div class="field-label">Merchant</div>
+        <div class="field-box">
+          <input class="field-input" value="Phở Gánh" />
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <div class="field" style="flex: 1;">
+          <div class="field-label">Date</div>
+          <div class="field-box">
+            <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <input class="field-input" value="2 Jun 2026" />
+          </div>
+        </div>
+        <div class="field" style="width: 90px;">
+          <div class="field-label">Currency</div>
+          <div class="field-box">
+            <input class="field-input" value="VND" style="text-align: center;" />
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">Location</div>
+        <div class="field-box">
+          <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <input class="field-input" value="Hoàn Kiếm, Hà Nội" />
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">Note</div>
+        <div class="field-box">
+          <input class="field-input" placeholder="Add a note (optional)" />
+        </div>
+      </div>
+    </div>
+
+    <div class="review-bill-type">
+      <div class="field-label" style="margin-bottom: 8px;">Bill type</div>
+      <div class="seg" style="width: 100%;">
+        <button class="seg-item active">Receipt</button>
+        <button class="seg-item">Transfer</button>
+        <button class="seg-item">Other</button>
+      </div>
+    </div>
+
+    <div class="review-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      Anything OCR got wrong? Just tap a field to fix it.
+    </div>
+
+    <div class="review-footer">
+      <button class="btn btn-primary btn-full btn-pill" onclick="showScreen('split')">Continue to split</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SPLIT BILL
+     ============================================================ -->
+<div class="screen" id="screen-split">
+  <div class="split-header">
+    <button class="split-back" onclick="showScreen('review')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="t-title" style="flex: 1;">Split bill</div>
+  </div>
+
+  <div class="scroll-area">
+    <div style="padding: 4px 20px 8px;">
+      <div class="section-label" style="margin-bottom: 10px;">Who paid?</div>
+    </div>
+    <div class="split-payer">
+      <button class="payer-chip">
+        <div class="avatar avatar-md" style="background: var(--indigo-500);">Y</div>
+        <div class="payer-chip-name">You</div>
+      </button>
+      <button class="payer-chip selected">
+        <div class="avatar avatar-md" style="background: var(--indigo-500);">TN</div>
+        <div class="payer-chip-name">Tùng</div>
+      </button>
+      <button class="payer-chip">
+        <div class="avatar avatar-md" style="background: #1E9E8E;">NT</div>
+        <div class="payer-chip-name">Nam</div>
+      </button>
+      <button class="payer-chip">
+        <div class="avatar avatar-md" style="background: #E0635C;">LP</div>
+        <div class="payer-chip-name">Linh</div>
+      </button>
+      <button class="payer-chip">
+        <div class="avatar avatar-md" style="background: #9A4FB8;">ML</div>
+        <div class="payer-chip-name">Mai</div>
+      </button>
+      <button class="payer-chip">
+        <div class="avatar avatar-md" style="background: #DD9210;">HD</div>
+        <div class="payer-chip-name">Huy</div>
+      </button>
+    </div>
+
+    <div style="padding: 4px 20px 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="section-label">Split between</div>
+        <span class="t-caption c-secondary">3 selected</span>
+      </div>
+    </div>
+    <div class="split-participants">
+      <button class="participant-chip selected">
+        <div class="avatar avatar-sm" style="background: var(--indigo-500); width: 28px; height: 28px; font-size: 10px;">Y</div>
+        You
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+      <button class="participant-chip selected">
+        <div class="avatar avatar-sm" style="background: var(--indigo-500); width: 28px; height: 28px; font-size: 10px;">TN</div>
+        Tùng
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+      <button class="participant-chip">
+        <div class="avatar avatar-sm" style="background: #1E9E8E; width: 28px; height: 28px; font-size: 10px;">NT</div>
+        Nam
+      </button>
+      <button class="participant-chip selected">
+        <div class="avatar avatar-sm" style="background: #E0635C; width: 28px; height: 28px; font-size: 10px;">LP</div>
+        Linh
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+      <button class="participant-chip">
+        <div class="avatar avatar-sm" style="background: #9A4FB8; width: 28px; height: 28px; font-size: 10px;">ML</div>
+        Mai
+      </button>
+      <button class="participant-chip">
+        <div class="avatar avatar-sm" style="background: #DD9210; width: 28px; height: 28px; font-size: 10px;">HD</div>
+        Huy
+      </button>
+    </div>
+
+    <div style="padding: 0 20px; margin-bottom: 12px;">
+      <div class="seg" style="width: 100%;">
+        <button class="seg-item active">Equally</button>
+        <button class="seg-item">Custom</button>
+        <button class="seg-item">Percent</button>
+      </div>
+    </div>
+
+    <div class="split-amounts">
+      <div class="person-row" style="background: var(--bg-card); border-radius: var(--r-md); margin-bottom: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+        <div class="avatar avatar-md" style="background: var(--indigo-500);">Y</div>
+        <div class="person-row-info">
+          <div class="person-row-name">You</div>
+          <div class="person-row-sub" style="color: var(--paid);">Paid the bill</div>
+        </div>
+        <div class="person-row-amount">49.000 ₫</div>
+      </div>
+      <div class="person-row" style="background: var(--bg-card); border-radius: var(--r-md); margin-bottom: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+        <div class="avatar avatar-md" style="background: var(--indigo-500);">TN</div>
+        <div class="person-row-info">
+          <div class="person-row-name">Tùng</div>
+        </div>
+        <div class="person-row-amount">49.000 ₫</div>
+      </div>
+      <div class="person-row" style="background: var(--bg-card); border-radius: var(--r-md); margin-bottom: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+        <div class="avatar avatar-md" style="background: #E0635C;">LP</div>
+        <div class="person-row-info">
+          <div class="person-row-name">Linh</div>
+        </div>
+        <div class="person-row-amount">49.000 ₫</div>
+      </div>
+    </div>
+
+    <div style="padding: 4px 20px 0;">
+      <div class="section-label" style="margin-bottom: 10px;">Summary</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-item">
+        <div class="summary-item-dot" style="background: var(--unpaid);"></div>
+        <span><strong>Tùng Nguyễn</strong> owes <strong>You</strong> 49.000 ₫</span>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-dot" style="background: var(--unpaid);"></div>
+        <span><strong>Linh Phạm</strong> owes <strong>You</strong> 49.000 ₫</span>
+      </div>
+    </div>
+
+    <div style="padding: 12px 20px 40px;">
+      <button class="btn btn-primary btn-full btn-pill" onclick="showScreen('gallery')">Save bill</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- .phone -->
+
+<script>
+// ================================================================
+// BILL DATA
+// ================================================================
+const bills = {
+  june: [
+    { id: 1, name: 'Phở Gánh', amount: '147k', amountFull: '147.000 ₫', bg: 'receipt-art-bg-warm', type: 'receipt', paid: false,
+      merchant: 'PHỞ GÁNH', addr: '12 Hàng Trống, Hoàn Kiếm',
+      items: [['Phở bò tái','65.000'],['Phở gà','60.000'],['Quẩy','10.000'],['Trà đá x4','12.000']], total: '147.000 đ' },
+    { id: 2, name: 'Cà Phê Máy', amount: '149k', amountFull: '149.000 ₫', bg: 'receipt-art-bg-cool', type: 'receipt', paid: true,
+      merchant: 'CÀ PHÊ MÁY', addr: '39 Hàng Bạc, Hoàn Kiếm',
+      items: [['Cà phê sữa','35.000'],['Bạc xỉu','35.000'],['Egg coffee','45.000'],['Sinh tố','34.000']], total: '149.000 đ' },
+    { id: 3, name: 'NamiBank', amount: '1.3M', amountFull: '1.250.000 ₫', bg: 'receipt-art-bg-blue', type: 'transfer', paid: true,
+      transferAmount: '1.250.000 đ', transferRecipient: 'TÙNG NGUYỄN', transferBank: 'NamiBank' },
+  ],
+  may: [
+    { id: 4, name: 'Biển Xanh', amount: '922k', amountFull: '922.000 ₫', bg: 'receipt-art-bg-sage', type: 'receipt', paid: false,
+      merchant: 'NHÀ HÀNG BIỂN XANH', addr: 'Bãi Sau, Vũng Tàu',
+      items: [['Lẩu hải sản','350.000'],['Tôm nướng','198.000'],['Com chiên','92.000'],['Nước','32.000'],['Bia','250.000']], total: '922.000 đ' },
+    { id: 5, name: 'Gas & Go', amount: '149k', amountFull: '149.000 ₫', bg: 'receipt-art-bg-cream', type: 'receipt', paid: true,
+      merchant: 'GAS & GO', addr: 'Trạm xăng Q.1',
+      items: [['Xăng RON 95','149.000']], total: '149.000 đ' },
+    { id: 6, name: 'Bánh Mì Cô Ba', amount: '100k', amountFull: '100.000 ₫', bg: 'receipt-art-bg-rose', type: 'receipt', paid: true,
+      merchant: 'BÁNH MÌ CÔ BA', addr: 'Nguyễn Trãi, Q.1',
+      items: [['Bánh mì thịt','25.000'],['Bánh mì bò','30.000'],['Nước mía x2','20.000'],['Bánh mì chả','25.000']], total: '100.000 đ' },
+    { id: 7, name: 'Lẩu Quê', amount: '656k', amountFull: '656.000 ₫', bg: 'receipt-art-bg-warm', type: 'receipt', paid: false,
+      merchant: 'LẨU QUÊ', addr: '15 Trần Đình Xu, Q.1',
+      items: [['Lẩu gà lá é','199.000'],['Bún thêm','15.000'],['Rau thêm','15.000'],['Bia x6','174.000'],['Cơm chiên','45.000']], total: '656.000 đ' },
+    { id: 8, name: 'VietinBank', amount: '300k', amountFull: '300.000 ₫', bg: 'receipt-art-bg-blue', type: 'transfer', paid: true,
+      transferAmount: '300.000 đ', transferRecipient: 'LINH PHẠM', transferBank: 'VietinBank' },
+    { id: 9, name: 'Minimart 24', amount: '88k', amountFull: '88.000 ₫', bg: 'receipt-art-bg-cool', type: 'receipt', paid: true,
+      merchant: 'MINIMART 24', addr: 'Phạm Ngũ Lão, Q.1',
+      items: [['Nước suối','12.000'],['Snack','18.000'],['Kem','22.000'],['Khăn giấy','8.000'],['Nước cam','28.000']], total: '88.000 đ' },
+  ]
+};
+
+// ================================================================
+// RENDER GALLERY TILES
+// ================================================================
+function createReceiptTile(bill) {
+  const tile = document.createElement('button');
+  tile.className = 'gallery-tile';
+  tile.onclick = () => openDetail(bill);
+
+  if (bill.type === 'transfer') {
+    tile.innerHTML = `
+      <div class="transfer-art ${bill.bg}">
+        <div class="transfer-card">
+          <div class="transfer-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="transfer-label">Chuyển khoản thành công</div>
+          <div class="transfer-amount">${bill.transferAmount}</div>
+          <div class="transfer-row"><span>Người nhận</span><span style="font-weight:600;">${bill.transferRecipient}</span></div>
+          <div class="transfer-row"><span>Ngân hàng</span><span>${bill.transferBank}</span></div>
+        </div>
+      </div>
+      <div class="gallery-tile-scrim"></div>
+      <div class="gallery-tile-meta">
+        <div class="gallery-tile-amount">${bill.amount} ₫</div>
+        <div class="gallery-tile-name">${bill.name}</div>
+      </div>
+      ${bill.paid ? '<div class="gallery-tile-dot" style="background:var(--green-500);"></div>' : '<div class="gallery-tile-dot" style="background:var(--orange-500);"></div>'}
+    `;
+  } else {
+    const itemsHTML = bill.items.slice(0, 4).map(([name, price]) =>
+      `<div class="receipt-paper-row"><span>${name}</span><span>${price}</span></div>`
+    ).join('');
+
+    tile.innerHTML = `
+      <div class="receipt-art ${bill.bg}">
+        <div class="receipt-paper">
+          <div class="receipt-paper-title">${bill.merchant}</div>
+          <div class="receipt-paper-addr">${bill.addr}</div>
+          <div class="receipt-paper-line"></div>
+          ${itemsHTML}
+          <div class="receipt-paper-line"></div>
+          <div class="receipt-paper-total"><span>TỔNG</span><span>${bill.total}</span></div>
+        </div>
+      </div>
+      <div class="gallery-tile-scrim"></div>
+      <div class="gallery-tile-meta">
+        <div class="gallery-tile-amount">${bill.amount} ₫</div>
+        <div class="gallery-tile-name">${bill.name}</div>
+      </div>
+      ${bill.paid ? '<div class="gallery-tile-dot" style="background:var(--green-500);"></div>' : '<div class="gallery-tile-dot" style="background:var(--orange-500);"></div>'}
+    `;
+  }
+  return tile;
+}
+
+function renderGallery() {
+  const juneGrid = document.getElementById('gallery-grid-june');
+  const mayGrid = document.getElementById('gallery-grid-may');
+  juneGrid.innerHTML = '';
+  mayGrid.innerHTML = '';
+  bills.june.forEach(b => juneGrid.appendChild(createReceiptTile(b)));
+  bills.may.forEach(b => mayGrid.appendChild(createReceiptTile(b)));
+}
+
+// ================================================================
+// BILL DETAIL
+// ================================================================
+function openDetail(bill) {
+  const header = document.getElementById('detail-header-img');
+  document.getElementById('detail-amount').textContent = bill.amountFull;
+  document.getElementById('detail-merchant').textContent = bill.name;
+
+  if (bill.type === 'receipt') {
+    header.style.background = 'linear-gradient(145deg, #E8DFD1, #D4CBBC)';
+    header.innerHTML = `
+      <button class="detail-back" onclick="showScreen('gallery')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40px 60px 20px;">
+        <div style="background: white; border-radius: 6px; padding: 14px 10px; width: 160px; font-family: var(--font-mono); font-size: 8px; color: var(--grey-700); box-shadow: 0 2px 12px rgba(0,0,0,0.1);">
+          <div style="text-align:center;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;">${bill.merchant}</div>
+          <div style="text-align:center;font-size:6px;color:var(--grey-500);margin-bottom:4px;">${bill.addr}</div>
+          <div style="border-top:1px dashed var(--grey-300);margin:4px 0;"></div>
+          ${bill.items.map(([n,p]) => `<div style="display:flex;justify-content:space-between;font-size:6px;line-height:1.6;"><span>${n}</span><span>${p}</span></div>`).join('')}
+          <div style="border-top:1px dashed var(--grey-300);margin:4px 0;"></div>
+          <div style="display:flex;justify-content:space-between;font-weight:700;font-size:9px;"><span>TỔNG</span><span>${bill.total}</span></div>
+        </div>
+      </div>
+    `;
+  } else {
+    header.style.background = 'linear-gradient(145deg, #D0DEF0, #BFD0E4)';
+    header.innerHTML = `
+      <button class="detail-back" onclick="showScreen('gallery')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40px 60px 20px;">
+        <div style="background: white; border-radius: 10px; padding: 20px 16px; width: 180px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+          <div style="width:28px;height:28px;background:var(--green-500);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="font:500 8px/1 var(--font-ui);color:var(--green-600);margin-bottom:6px;">Chuyển khoản thành công</div>
+          <div style="font:800 18px/1 var(--font-display);color:var(--grey-900);">${bill.transferAmount}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  showScreen('detail');
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+let currentScreen = 'gallery';
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => {
+    if (s.classList.contains('active')) {
+      s.classList.remove('active');
+      s.classList.add('slide-out');
+      setTimeout(() => s.classList.remove('slide-out'), 300);
+    } else {
+      s.classList.remove('active');
+    }
+  });
+
+  const target = document.getElementById('screen-' + name);
+  if (target) {
+    setTimeout(() => {
+      target.classList.add('active');
+      // Scroll to top
+      const scrollArea = target.querySelector('.scroll-area');
+      if (scrollArea) scrollArea.scrollTop = 0;
+    }, 50);
+  }
+  currentScreen = name;
+}
+
+// ================================================================
+// BOTTOM SHEET
+// ================================================================
+function showSheet() {
+  document.getElementById('sheet-backdrop').classList.add('show');
+  document.getElementById('add-sheet').classList.add('show');
+}
+function hideSheet() {
+  document.getElementById('sheet-backdrop').classList.remove('show');
+  document.getElementById('add-sheet').classList.remove('show');
+}
+
+// ================================================================
+// FILTER CHIPS
+// ================================================================
+document.querySelectorAll('#gallery-filters .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#gallery-filters .chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+  });
+});
+
+// ================================================================
+// ONBOARDING
+// ================================================================
+let onboardStep = 0;
+const onboardData = [
+  {
+    title: 'A gallery for your bills',
+    desc: 'Save every paper receipt and bank transfer as a photo you can actually find.',
+    btn: 'Continue'
+  },
+  {
+    title: 'Split & track who owes',
+    desc: 'Split equally or by custom amounts, and see at a glance who still owes you.',
+    btn: 'Continue'
+  },
+  {
+    title: 'Private by default',
+    desc: 'Everything stays on your device. No account, no feed, no one else needed.',
+    btn: 'Get started'
+  }
+];
+
+function renderOnboardVisual() {
+  const visual = document.getElementById('onboard-visual');
+  const colors = [
+    ['receipt-art-bg-warm', 'receipt-art-bg-cool', 'receipt-art-bg-blue'],
+    ['receipt-art-bg-sage', 'receipt-art-bg-rose', 'receipt-art-bg-cream'],
+    ['receipt-art-bg-blue', 'receipt-art-bg-warm', 'receipt-art-bg-sage'],
+  ];
+  const c = colors[onboardStep];
+
+  visual.innerHTML = `
+    <div class="onboard-illust">
+      <div class="onboard-receipt" style="width:140px;height:190px;left:0;top:40px;transform:rotate(-4deg);">
+        <div class="receipt-art ${c[0]}" style="padding:8px;">
+          <div class="receipt-paper" style="font-size:5px;">
+            <div class="receipt-paper-title" style="font-size:6px;">PHỞ GÁNH</div>
+            <div class="receipt-paper-line"></div>
+            <div class="receipt-paper-row"><span>Phở bò</span><span>65k</span></div>
+            <div class="receipt-paper-row"><span>Phở gà</span><span>60k</span></div>
+            <div class="receipt-paper-line"></div>
+            <div class="receipt-paper-total" style="font-size:6px;"><span>TỔNG</span><span>147k đ</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="onboard-receipt" style="width:140px;height:190px;right:0;top:20px;transform:rotate(3deg);">
+        <div class="receipt-art ${c[1]}" style="padding:8px;">
+          <div class="receipt-paper" style="font-size:5px;">
+            <div class="receipt-paper-title" style="font-size:6px;">CÀ PHÊ MÁY</div>
+            <div class="receipt-paper-line"></div>
+            <div class="receipt-paper-row"><span>Cà phê</span><span>35k</span></div>
+            <div class="receipt-paper-row"><span>Bạc xỉu</span><span>35k</span></div>
+            <div class="receipt-paper-line"></div>
+            <div class="receipt-paper-total" style="font-size:6px;"><span>TỔNG</span><span>149k đ</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="onboard-receipt" style="width:120px;height:160px;left:50%;top:0;transform:translateX(-50%) rotate(-1deg);">
+        <div class="${onboardStep === 0 ? 'transfer-art' : 'receipt-art'} ${c[2]}" style="padding:6px;">
+          ${onboardStep === 0 ? `
+            <div class="transfer-card" style="padding:8px 6px;">
+              <div class="transfer-check" style="width:14px;height:14px;margin-bottom:2px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" style="width:8px;height:8px;"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="transfer-label" style="font-size:4px;">Chuyển khoản thành công</div>
+              <div class="transfer-amount" style="font-size:9px;">300.000 đ</div>
+            </div>
+          ` : `
+            <div class="receipt-paper" style="font-size:4px;">
+              <div class="receipt-paper-title" style="font-size:5px;">BIỂN XANH</div>
+              <div class="receipt-paper-line"></div>
+              <div class="receipt-paper-row"><span>Lẩu hải sản</span><span>350k</span></div>
+              <div class="receipt-paper-row"><span>Tôm nướng</span><span>198k</span></div>
+              <div class="receipt-paper-line"></div>
+              <div class="receipt-paper-total" style="font-size:5px;"><span>TỔNG</span><span>922k đ</span></div>
+            </div>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function nextOnboarding() {
+  onboardStep++;
+  if (onboardStep >= 3) {
+    skipOnboarding();
+    return;
+  }
+  const data = onboardData[onboardStep];
+  document.getElementById('onboard-title').textContent = data.title;
+  document.getElementById('onboard-desc').textContent = data.desc;
+  document.getElementById('onboard-next').textContent = data.btn;
+
+  const dots = document.querySelectorAll('.onboarding-dot');
+  dots.forEach((d, i) => d.classList.toggle('active', i === onboardStep));
+
+  renderOnboardVisual();
+}
+
+function skipOnboarding() {
+  document.getElementById('onboarding').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('onboarding').style.display = 'none';
+  }, 500);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderGallery();
+  renderOnboardVisual();
+});
+</script>
+
+</body>
+</html>

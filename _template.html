@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bill Gallery</title>
+<style>/* Bill Gallery — webfonts
+   No proprietary font binaries were provided; Hanken Grotesk (Google Fonts)
+   is the canonical UI family. It is metrically close to SF Pro and supports
+   tabular figures for amounts. */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fd160aa7-85b3-4704-a2a5-fdb4ec206793") format('woff');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("f096d4a4-456a-4c51-9be9-7c8ef5d4a2b1") format('woff');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4e6fb6de-4c54-4393-8eb0-1f78e501a778") format('woff');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("761579d1-1ad0-4238-963e-c670e109b766") format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("235f254a-c24b-4be6-896b-d5d76b8570c6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d7fa5e8c-58a3-46a0-9df6-3529d10a1764") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7f9cf103-a544-4a9c-b06a-a64097a59d75") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("39c8cf59-d903-4ac2-ae5a-3b3a7476b91d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("235f254a-c24b-4be6-896b-d5d76b8570c6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d7fa5e8c-58a3-46a0-9df6-3529d10a1764") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("7f9cf103-a544-4a9c-b06a-a64097a59d75") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("39c8cf59-d903-4ac2-ae5a-3b3a7476b91d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("235f254a-c24b-4be6-896b-d5d76b8570c6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d7fa5e8c-58a3-46a0-9df6-3529d10a1764") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("7f9cf103-a544-4a9c-b06a-a64097a59d75") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("39c8cf59-d903-4ac2-ae5a-3b3a7476b91d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("235f254a-c24b-4be6-896b-d5d76b8570c6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d7fa5e8c-58a3-46a0-9df6-3529d10a1764") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("7f9cf103-a544-4a9c-b06a-a64097a59d75") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("39c8cf59-d903-4ac2-ae5a-3b3a7476b91d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("235f254a-c24b-4be6-896b-d5d76b8570c6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("d7fa5e8c-58a3-46a0-9df6-3529d10a1764") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("7f9cf103-a544-4a9c-b06a-a64097a59d75") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("39c8cf59-d903-4ac2-ae5a-3b3a7476b91d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --font-ui: "Hanken Grotesk", -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Hanken Grotesk", -apple-system, "SF Pro Display", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Menlo", monospace;
+}
+
+/* Bill Gallery — color tokens
+   Light-first. Warm paper neutrals, charcoal ink, cobalt-indigo accent.
+   Paid = soft green, Unpaid = soft orange. Dark theme via [data-theme="dark"]. */
+
+:root {
+  /* ---- Base palette ---- */
+  --paper-0: #FFFFFF;
+  --paper-1: #F7F7F5;
+  --paper-2: #F0F0EC;
+  --paper-3: #E8E8E3;
+
+  --ink-900: #1B1F27;
+  --ink-700: #3A3F4B;
+  --ink-500: #6B7280;
+  --ink-400: #9AA0AB;
+  --ink-300: #C2C7CF;
+
+  --indigo-700: #2C46BE;
+  --indigo-600: #3B5BDB;
+  --indigo-500: #4C6EF5;
+  --indigo-100: #E6EBFC;
+  --indigo-50:  #F1F4FE;
+
+  --green-600: #1F8A5B;
+  --green-500: #2E9E6B;
+  --green-100: #DFF2E8;
+
+  --orange-600: #D97B1C;
+  --orange-500: #E8902E;
+  --orange-100: #FBEEDC;
+
+  --red-500: #D9484A;
+  --red-100: #FBE6E6;
+
+  /* Avatar / person colors (assignable per participant) */
+  --person-indigo: #4C6EF5;
+  --person-teal:   #1E9E8E;
+  --person-plum:   #9A4FB8;
+  --person-coral:  #E0635C;
+  --person-amber:  #DD9210;
+  --person-slate:  #5C7299;
+
+  /* ---- Semantic aliases ---- */
+  --bg-app: var(--paper-1);
+  --bg-grouped: var(--paper-1);
+  --surface-card: var(--paper-0);
+  --surface-sunken: var(--paper-2);
+  --surface-sheet: var(--paper-0);
+  --surface-overlay: rgba(20, 22, 28, 0.45);
+
+  --text-primary: var(--ink-900);
+  --text-secondary: var(--ink-500);
+  --text-tertiary: var(--ink-400);
+  --text-on-accent: #FFFFFF;
+  --text-accent: var(--indigo-600);
+  --text-amount: var(--ink-900);
+
+  --accent: var(--indigo-600);
+  --accent-pressed: var(--indigo-700);
+  --accent-soft: var(--indigo-100);
+  --accent-soft-text: var(--indigo-700);
+
+  --status-paid: var(--green-600);
+  --status-paid-bg: var(--green-100);
+  --status-unpaid: var(--orange-600);
+  --status-unpaid-bg: var(--orange-100);
+  --status-danger: var(--red-500);
+  --status-danger-bg: var(--red-100);
+
+  --border-hairline: rgba(27, 31, 39, 0.08);
+  --border-strong: rgba(27, 31, 39, 0.14);
+  --separator: rgba(27, 31, 39, 0.06);
+
+  --fill-control: rgba(27, 31, 39, 0.05);
+  --fill-control-pressed: rgba(27, 31, 39, 0.10);
+
+  --tabbar-bg: rgba(255, 255, 255, 0.88);
+  --scrim-photo: linear-gradient(180deg, rgba(15,17,22,0) 40%, rgba(15,17,22,0.55) 100%); /* @kind other */
+}
+
+/* ---- Dark theme ---- */
+[data-theme="dark"] {
+  --bg-app: #14161B;
+  --bg-grouped: #14161B;
+  --surface-card: #1E2129;
+  --surface-sunken: #181B21;
+  --surface-sheet: #22252E;
+  --surface-overlay: rgba(0, 0, 0, 0.6);
+
+  --text-primary: #F2F3F5;
+  --text-secondary: #9BA1AD;
+  --text-tertiary: #6E7480;
+  --text-accent: #7C95F8;
+  --text-amount: #F2F3F5;
+
+  --accent: #4C6EF5;
+  --accent-pressed: #3B5BDB;
+  --accent-soft: rgba(76, 110, 245, 0.18);
+  --accent-soft-text: #A5B6FA;
+
+  --status-paid: #4FBE8B;
+  --status-paid-bg: rgba(46, 158, 107, 0.18);
+  --status-unpaid: #EFA552;
+  --status-unpaid-bg: rgba(232, 144, 46, 0.16);
+  --status-danger: #E5706F;
+  --status-danger-bg: rgba(217, 72, 74, 0.16);
+
+  --border-hairline: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --separator: rgba(255, 255, 255, 0.07);
+
+  --fill-control: rgba(255, 255, 255, 0.07);
+  --fill-control-pressed: rgba(255, 255, 255, 0.13);
+
+  --tabbar-bg: rgba(24, 26, 32, 0.88);
+}
+
+/* Bill Gallery — type scale
+   One family (Hanken Grotesk). Amounts always use tabular figures. */
+
+:root {
+  /* Amount display — the hero number on Review / Detail */
+  --text-amount-hero: 800 40px/1.1 var(--font-display);
+  --text-amount-lg:   700 28px/1.15 var(--font-display);
+  --text-amount-md:   700 17px/1.3 var(--font-ui);
+  --text-amount-sm:   700 15px/1.3 var(--font-ui);
+
+  /* Titles */
+  --text-large-title: 800 30px/1.15 var(--font-display);  /* screen titles */
+  --text-title-1:     700 24px/1.2 var(--font-display);
+  --text-title-2:     700 19px/1.25 var(--font-display);
+  --text-headline:    600 16px/1.3 var(--font-ui);        /* card titles, rows */
+
+  /* Body */
+  --text-body:        400 15px/1.45 var(--font-ui);
+  --text-body-medium: 500 15px/1.45 var(--font-ui);
+  --text-callout:     500 14px/1.4 var(--font-ui);
+  --text-caption:     500 12.5px/1.35 var(--font-ui);     /* dates, meta */
+  --text-micro:       600 11px/1.3 var(--font-ui);        /* badges, tab labels */
+
+  --tracking-tight: -0.02em;   /* large titles & hero amounts */
+  --tracking-caps: 0.06em;     /* uppercase micro labels */
+
+  --tabular: "tnum" 1, "lnum" 1; /* @kind other */
+}
+
+.bg-amount { font-feature-settings: var(--tabular); letter-spacing: var(--tracking-tight); }
+
+/* Bill Gallery — spacing & shape */
+
+:root {
+  /* 4px base scale */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Screen chrome */
+  --screen-margin: 20px;        /* default horizontal page padding */
+  --grid-gap: 10px;             /* gallery photo grid gutter */
+  --stack-gap: 12px;            /* default vertical rhythm between cards */
+
+  /* Corner radii */
+  --radius-xs: 8px;             /* thumbnails inside rows */
+  --radius-sm: 12px;            /* inputs, chips, small controls */
+  --radius-md: 16px;            /* standard cards, gallery tiles */
+  --radius-lg: 20px;            /* feature cards, trip cards */
+  --radius-xl: 24px;            /* bottom sheets, modals */
+  --radius-full: 999px;         /* pills, avatars, FAB */
+
+  /* Hit targets */
+  --hit-min: 44px;
+  --control-h: 50px;            /* primary buttons, inputs */
+  --control-h-sm: 36px;
+  --fab-size: 58px;
+}
+
+/* Bill Gallery — elevation, motion, blur */
+
+:root {
+  /* Shadows — soft, low, neutral-tinted. Never harsh. */
+  --shadow-card: 0 1px 2px rgba(27, 31, 39, 0.04), 0 4px 14px rgba(27, 31, 39, 0.05);
+  --shadow-raised: 0 2px 6px rgba(27, 31, 39, 0.06), 0 10px 28px rgba(27, 31, 39, 0.10);
+  --shadow-fab: 0 4px 10px rgba(59, 91, 219, 0.28), 0 10px 26px rgba(59, 91, 219, 0.22);
+  --shadow-sheet: 0 -8px 40px rgba(27, 31, 39, 0.14);
+  --shadow-thumb: 0 1px 3px rgba(27, 31, 39, 0.10);
+
+  /* Motion — fast, calm. Nothing bouncy except the save-to-gallery fly-in. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.5, 1); /* @kind other */
+  --dur-fast: 140ms; /* @kind other */
+  --dur-base: 220ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+
+  /* Blur — only on fixed chrome (tab bar, camera controls) */
+  --blur-chrome: saturate(1.6) blur(18px); /* @kind other */
+}
+
+[data-theme="dark"] {
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.3);
+  --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.35), 0 10px 28px rgba(0, 0, 0, 0.45);
+  --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.5);
+  --shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Bill Gallery — component classes (consumed by the React primitives)
+   Everything references tokens; no hard-coded colors here. */
+
+/* ---------- Base reset for kit surfaces ---------- */
+.bg-app-root {
+  font: var(--text-body);
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+}
+.bg-app-root *, .bg-app-root *::before, .bg-app-root *::after { box-sizing: border-box; }
+
+/* ---------- Button ---------- */
+.bg-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: var(--control-h); padding: 0 22px;
+  border: none; border-radius: var(--radius-sm);
+  font: 600 16px/1 var(--font-ui); letter-spacing: 0;
+  cursor: pointer; user-select: none; white-space: nowrap;
+  transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.bg-btn:active { transform: scale(0.97); }
+.bg-btn--primary { background: var(--accent); color: var(--text-on-accent); }
+.bg-btn--primary:hover { background: var(--accent-pressed); }
+.bg-btn--secondary { background: var(--accent-soft); color: var(--accent-soft-text); }
+.bg-btn--secondary:hover { background: var(--indigo-100); filter: brightness(0.97); }
+.bg-btn--ghost { background: transparent; color: var(--text-accent); }
+.bg-btn--ghost:hover { background: var(--fill-control); }
+.bg-btn--neutral { background: var(--fill-control); color: var(--text-primary); }
+.bg-btn--neutral:hover { background: var(--fill-control-pressed); }
+.bg-btn--danger { background: transparent; color: var(--status-danger); }
+.bg-btn--danger:hover { background: var(--status-danger-bg); }
+.bg-btn--sm { height: var(--control-h-sm); padding: 0 14px; font-size: 14px; border-radius: 10px; }
+.bg-btn--full { width: 100%; }
+.bg-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+/* ---------- IconButton ---------- */
+.bg-iconbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--hit-min); height: var(--hit-min);
+  border: none; border-radius: var(--radius-full);
+  background: transparent; color: var(--text-primary); cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.bg-iconbtn:hover { background: var(--fill-control); }
+.bg-iconbtn:active { transform: scale(0.92); }
+.bg-iconbtn--filled { background: var(--fill-control); }
+.bg-iconbtn--filled:hover { background: var(--fill-control-pressed); }
+.bg-iconbtn--accent { background: var(--accent); color: var(--text-on-accent); }
+.bg-iconbtn--accent:hover { background: var(--accent-pressed); }
+
+/* ---------- FAB ---------- */
+.bg-fab {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--fab-size); height: var(--fab-size);
+  border: none; border-radius: var(--radius-full);
+  background: var(--accent); color: var(--text-on-accent);
+  box-shadow: var(--shadow-fab); cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-fast) var(--ease-out);
+}
+.bg-fab:hover { background: var(--accent-pressed); }
+.bg-fab:active { transform: scale(0.92); }
+
+/* ---------- Chip ---------- */
+.bg-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 14px;
+  border: 1px solid var(--border-hairline); border-radius: var(--radius-full);
+  background: var(--surface-card); color: var(--text-secondary);
+  font: 500 13.5px/1 var(--font-ui); cursor: pointer; white-space: nowrap;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.bg-chip:hover { border-color: var(--border-strong); }
+.bg-chip:active { transform: scale(0.96); }
+.bg-chip[data-selected="true"] {
+  background: var(--ink-900); border-color: var(--ink-900); color: var(--paper-0);
+}
+[data-theme="dark"] .bg-chip[data-selected="true"] { background: var(--text-primary); border-color: var(--text-primary); color: #14161B; }
+
+/* ---------- Badge ---------- */
+.bg-badge {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  height: 24px; padding: 0 10px; border-radius: var(--radius-full);
+  font: var(--text-micro); letter-spacing: 0.01em;
+}
+.bg-badge--paid { background: var(--status-paid-bg); color: var(--status-paid); }
+.bg-badge--unpaid { background: var(--status-unpaid-bg); color: var(--status-unpaid); }
+.bg-badge--partial { background: var(--status-unpaid-bg); color: var(--status-unpaid); }
+.bg-badge--neutral { background: var(--fill-control); color: var(--text-secondary); }
+.bg-badge--accent { background: var(--accent-soft); color: var(--accent-soft-text); }
+.bg-badge--danger { background: var(--status-danger-bg); color: var(--status-danger); }
+.bg-badge__dot { width: 6px; height: 6px; border-radius: 99px; background: currentColor; }
+
+/* ---------- SegmentedControl ---------- */
+.bg-seg {
+  display: inline-flex; padding: 3px; gap: 2px;
+  background: var(--surface-sunken); border-radius: var(--radius-sm);
+}
+.bg-seg__item {
+  border: none; background: transparent; color: var(--text-secondary);
+  height: 34px; padding: 0 16px; border-radius: 9px;
+  font: 600 13.5px/1 var(--font-ui); cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.bg-seg__item[data-active="true"] {
+  background: var(--surface-card); color: var(--text-primary);
+  box-shadow: var(--shadow-thumb);
+}
+.bg-seg--full { display: flex; }
+.bg-seg--full .bg-seg__item { flex: 1; }
+
+/* ---------- Switch ---------- */
+.bg-switch {
+  position: relative; width: 50px; height: 30px; border: none; padding: 0;
+  border-radius: var(--radius-full); background: var(--ink-300); cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out); flex: none;
+}
+[data-theme="dark"] .bg-switch { background: rgba(255,255,255,0.2); }
+.bg-switch[aria-checked="true"] { background: var(--status-paid); }
+.bg-switch__knob {
+  position: absolute; top: 2px; left: 2px; width: 26px; height: 26px;
+  border-radius: 99px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.bg-switch[aria-checked="true"] .bg-switch__knob { transform: translateX(20px); }
+
+/* ---------- Input ---------- */
+.bg-field { display: flex; flex-direction: column; gap: 6px; }
+.bg-field__label { font: var(--text-caption); color: var(--text-secondary); }
+.bg-field__box {
+  display: flex; align-items: center; gap: 10px;
+  height: var(--control-h); padding: 0 14px;
+  background: var(--surface-sunken); border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.bg-field__box:focus-within { border-color: var(--accent); background: var(--surface-card); }
+.bg-field__input {
+  flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+  font: var(--text-body-medium); font-family: var(--font-ui); color: var(--text-primary);
+}
+.bg-field__input::placeholder { color: var(--text-tertiary); }
+.bg-field__affix { font: var(--text-callout); color: var(--text-tertiary); flex: none; }
+.bg-field--error .bg-field__box { border-color: var(--status-danger); }
+.bg-field__hint { font: var(--text-caption); color: var(--text-tertiary); }
+.bg-field--error .bg-field__hint { color: var(--status-danger); }
+
+/* ---------- AmountField (hero amount entry) ---------- */
+.bg-amountfield { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.bg-amountfield__row { display: flex; align-items: baseline; gap: 8px; justify-content: center; }
+.bg-amountfield__input {
+  border: none; outline: none; background: transparent; text-align: center;
+  font: var(--text-amount-hero); font-feature-settings: var(--tabular);
+  letter-spacing: var(--tracking-tight); color: var(--text-amount);
+  width: 100%; max-width: 280px; caret-color: var(--accent);
+}
+.bg-amountfield__currency { font: var(--text-amount-lg); color: var(--text-tertiary); flex: none; }
+.bg-amountfield__label { font: var(--text-caption); color: var(--text-secondary); }
+
+/* ---------- SearchBar ---------- */
+.bg-search {
+  display: flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 12px;
+  background: var(--fill-control); border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+}
+.bg-search input {
+  flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+  font: var(--text-body); font-family: var(--font-ui); color: var(--text-primary);
+}
+.bg-search input::placeholder { color: var(--text-tertiary); }
+
+/* ---------- Avatar ---------- */
+.bg-avatar {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-full); color: #fff; flex: none;
+  font-family: var(--font-ui); font-weight: 700; user-select: none;
+}
+.bg-avatar__check {
+  position: absolute; right: -2px; bottom: -2px;
+  display: flex; align-items: center; justify-content: center;
+  width: 45%; height: 45%; min-width: 14px; min-height: 14px;
+  border-radius: 99px; background: var(--status-paid); color: #fff;
+  border: 2px solid var(--surface-card);
+}
+.bg-avatarstack { display: inline-flex; align-items: center; }
+.bg-avatarstack .bg-avatar { border: 2px solid var(--surface-card); }
+.bg-avatarstack > *:not(:first-child) { margin-left: -8px; }
+.bg-avatarstack__more {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 99px; background: var(--fill-control-pressed); color: var(--text-secondary);
+  font: 700 11px/1 var(--font-ui); border: 2px solid var(--surface-card);
+}
+
+/* ---------- Card ---------- */
+.bg-card {
+  background: var(--surface-card); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card); border: 1px solid var(--border-hairline);
+}
+.bg-card--lg { border-radius: var(--radius-lg); }
+.bg-card--flat { box-shadow: none; }
+.bg-card--pressable { cursor: pointer; transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+.bg-card--pressable:active { transform: scale(0.98); }
+
+/* ---------- ListRow ---------- */
+.bg-listrow {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 56px; padding: 8px 16px; width: 100%;
+  background: transparent; border: none; text-align: left; cursor: pointer;
+  font-family: var(--font-ui); color: var(--text-primary);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.bg-listrow:hover { background: var(--fill-control); }
+.bg-listrow:active { background: var(--fill-control-pressed); }
+.bg-listrow__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.bg-listrow__title { font: var(--text-headline); color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bg-listrow__sub { font: var(--text-caption); color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bg-listrow__trailing { display: flex; align-items: center; gap: 8px; flex: none; color: var(--text-tertiary); }
+.bg-listrow + .bg-listrow { border-top: 1px solid var(--separator); }
+.bg-listrow--static { cursor: default; }
+.bg-listrow--static:hover, .bg-listrow--static:active { background: transparent; }
+
+/* ---------- BillTile (gallery grid) ---------- */
+.bg-tile {
+  position: relative; display: block; width: 100%;
+  border: none; padding: 0; background: var(--surface-sunken);
+  border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
+  box-shadow: var(--shadow-thumb);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.bg-tile:active { transform: scale(0.97); }
+.bg-tile__img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+.bg-tile__scrim { position: absolute; inset: 0; background: var(--scrim-photo); pointer-events: none; }
+.bg-tile__meta {
+  position: absolute; left: 10px; right: 10px; bottom: 8px;
+  display: flex; flex-direction: column; gap: 0; text-align: left; color: #fff;
+}
+.bg-tile__amount { font: 700 16px/1.25 var(--font-ui); font-feature-settings: var(--tabular); }
+.bg-tile__title { font: 500 11.5px/1.3 var(--font-ui); opacity: 0.85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bg-tile__status { position: absolute; top: 8px; right: 8px; }
+.bg-tile__dot {
+  width: 10px; height: 10px; border-radius: 99px;
+  border: 2px solid rgba(255,255,255,0.9); box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.bg-tile__dot--paid { background: var(--green-500); }
+.bg-tile__dot--unpaid { background: var(--orange-500); }
+
+/* ---------- NavBar ---------- */
+.bg-navbar {
+  display: flex; align-items: center; gap: 8px;
+  height: 52px; padding: 0 8px;
+}
+.bg-navbar__title { flex: 1; min-width: 0; font: var(--text-title-2); letter-spacing: var(--tracking-tight); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bg-navbar__title--center { text-align: center; font: var(--text-headline); }
+
+/* ---------- TabBar ---------- */
+.bg-tabbar {
+  display: flex; align-items: stretch;
+  background: var(--tabbar-bg); backdrop-filter: var(--blur-chrome); -webkit-backdrop-filter: var(--blur-chrome);
+  border-top: 1px solid var(--separator);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 14px));
+}
+.bg-tabbar__item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border: none; background: none; cursor: pointer; padding: 4px 0;
+  color: var(--text-tertiary); font: var(--text-micro); font-family: var(--font-ui);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.bg-tabbar__item[data-active="true"] { color: var(--accent); }
+
+/* ---------- BottomSheet ---------- */
+.bg-sheet-backdrop {
+  position: absolute; inset: 0; background: var(--surface-overlay); z-index: 40;
+  animation: bg-fade-in var(--dur-base) var(--ease-out);
+}
+.bg-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 41;
+  background: var(--surface-sheet);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-sheet);
+  padding: 8px 20px calc(16px + env(safe-area-inset-bottom, 14px));
+  animation: bg-sheet-up var(--dur-slow) var(--ease-out);
+}
+.bg-sheet__grabber { width: 36px; height: 4px; border-radius: 99px; background: var(--ink-300); margin: 4px auto 12px; }
+[data-theme="dark"] .bg-sheet__grabber { background: rgba(255,255,255,0.25); }
+.bg-sheet__title { font: var(--text-title-2); letter-spacing: var(--tracking-tight); margin: 0 0 4px; }
+@keyframes bg-sheet-up { from { transform: translateY(40%); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+@keyframes bg-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Misc ---------- */
+.bg-section-label {
+  font: var(--text-micro); text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--text-tertiary);
+}
+.bg-divider { height: 1px; background: var(--separator); border: none; margin: 0; }
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+<script src="9b26f927-89c5-4ebb-8c9a-cb380e9dd981"></script>
+<script src="861e0163-2040-41bb-89d2-7de0f857414c" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="fb9d5d85-f505-4ada-9361-1085893007f5" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="b760ab18-f414-4adf-9690-d54b9d846137" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="25bd211c-7fdf-47bf-bec1-e31fc3a45dd9"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #E4E3DE;
+    background-image: radial-gradient(120% 90% at 50% 0%, #EDECE8 0%, #DEDDD7 100%);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px; box-sizing: border-box;
+    font-family: var(--font-ui);
+  }
+  /* scrollbars inside the phone */
+  .bg-scroll::-webkit-scrollbar { width: 0; height: 0; }
+  .bg-scroll { scrollbar-width: none; }
+  #root { display: flex; }
+</style>
+</head>
+<body class="bg-app-root">
+
+<div id="root"></div>
+<script src="b4b0cd45-16f0-4410-bfca-53a0dc4b6c08"></script>
+<script type="text/babel" src="639fde73-6054-4bfb-a310-c1964ccb2c67"></script>
+<script type="text/babel" src="8ad87706-2caf-482f-a2af-f35e57238896"></script>
+<script type="text/babel" src="9b08da93-26c8-430a-b22c-6b85391a2428"></script>
+<script type="text/babel" src="8e0d755e-6e6a-4081-b665-230472c10247"></script>
+<script type="text/babel" src="c12f23c6-3f14-4b73-b1ac-8e1d4a319be9"></script>
+<script type="text/babel" src="d1f2203a-6fd6-418e-a0e0-fad6108f4cea"></script>
+<script type="text/babel" src="65160447-575f-43ac-928a-d86137c2d8c0"></script>
+
+
+</body></html>
