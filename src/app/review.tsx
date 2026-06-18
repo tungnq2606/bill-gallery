@@ -97,7 +97,7 @@ const ReviewScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScreenHeader
         title="Xem lại"
         leftIcon={<BackIcon />}
