@@ -1,12 +1,35 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Alert, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
 import { Button } from '@/shared/components';
 import { colors, typography, spacing } from '@/shared/theme';
 
 const ScanScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Quyền truy cập', 'Cần quyền truy cập thư viện ảnh để chọn hóa đơn.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      allowsEditing: true,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      const asset = result.assets[0];
+      router.push({
+        pathname: '/review',
+        params: { imageUri: asset.uri },
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -25,7 +48,7 @@ const ScanScreen = () => {
           title="Chọn từ thư viện"
           variant="secondary"
           full
-          onPress={() => {/* TODO: Image picker */}}
+          onPress={pickImage}
         />
       </View>
     </View>
