@@ -14,7 +14,7 @@ const ScreenHeader = ({ title, large = false, leftIcon, rightIcon, onBack }: Scr
   const insets = useSafeAreaInsets();
   // Pushed screens (with back button) use minimal top padding
   // Tab/root screens need full safe area inset
-  const topPadding = onBack ? Platform.select({ ios: 8, android: 8 }) ?? 8 : insets.top;
+  const topPadding = onBack ? 24 : insets.top;
 
   return (
     <View style={[styles.header, { paddingTop: topPadding }]}>
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   titleLarge: { ...typography.displayLg, flex: 1, letterSpacing: -0.5 },
   title: { ...typography.title, flex: 1 },
-  iconBtn: { width: 36, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  iconBtn: { width: 36, height: 36, borderRadius: 999, alignItems: 'center', justifyContent: 'center', marginLeft: -8 },
 });
 
 export default ScreenHeader;

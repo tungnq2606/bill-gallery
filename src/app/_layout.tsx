@@ -46,7 +46,10 @@ const RootLayout = () => {
   return (
     <>
       <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{
+        headerShown: false,
+        cardStyle: { borderTopLeftRadius: 8, borderTopRightRadius: 8 },
+      }}>
         {!hasOnboarded && (
           <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
         )}
