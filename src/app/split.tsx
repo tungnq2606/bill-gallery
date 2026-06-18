@@ -9,8 +9,8 @@ import { billRepo, personRepo, splitRepo } from '@/data/repositories';
 import { useSplitCalculator } from '@/features/split/useSplitCalculator';
 import type { Bill, Person, SplitType } from '@/data/types';
 
-const SPLIT_LABELS = ['Đều', 'Tùy chỉnh', 'Phần trăm', 'Phần'];
-const SPLIT_TYPES: SplitType[] = ['equal', 'custom', 'percent', 'shares'];
+const SPLIT_LABELS = ['Đều', 'Tùy chỉnh'];
+const SPLIT_TYPES: SplitType[] = ['equal', 'custom'];
 
 const SplitScreen = () => {
   const router = useRouter();
@@ -155,12 +155,14 @@ const SplitScreen = () => {
                 <Avatar initials={person.initials} color={person.avatarColor} size="sm" />
                 <Text style={styles.resultName}>{person.name}</Text>
                 {calc.splitType === 'custom' ? (
-                  <TextField
-                    value={String(calc.customAmounts[r.personId] ?? '')}
-                    onChangeText={(v) => calc.setCustomAmount(r.personId, parseInt(v.replace(/\D/g, ''), 10) || 0)}
-                    placeholder="0"
-                    keyboardType="number-pad"
-                  />
+                  <View style={styles.customInput}>
+                    <TextField
+                      value={calc.customAmounts[r.personId] ? String(calc.customAmounts[r.personId]) : ''}
+                      onChangeText={(v) => calc.setCustomAmount(r.personId, parseInt(v.replace(/\D/g, ''), 10) || 0)}
+                      placeholder="0"
+                      keyboardType="number-pad"
+                    />
+                  </View>
                 ) : (
                   <Text style={styles.resultAmount}>{formatAmount(r.amount)}</Text>
                 )}
@@ -267,6 +269,7 @@ const styles = StyleSheet.create({
     fontSize: 15, fontWeight: '700', fontFamily: 'Outfit-Bold',
     color: colors.textPrimary, fontVariant: ['tabular-nums'],
   },
+  customInput: { width: 120 },
   warning: {
     fontSize: 13, color: colors.unpaid, fontWeight: '600',
     textAlign: 'center', marginTop: spacing.md,
