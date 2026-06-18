@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button, Avatar, SegmentedControl, ScreenHeader, Card, TextField } from '@/shared/components';
+import { Button, Avatar, SegmentedControl, ScreenHeader, Card, TextField, AddPersonSheet } from '@/shared/components';
 import { colors, spacing, typography, radius } from '@/shared/theme';
 import { formatAmount } from '@/utils/currency';
 import { billRepo, personRepo, splitRepo } from '@/data/repositories';
@@ -22,6 +22,7 @@ const SplitScreen = () => {
   const [payerId, setPayerId] = useState<string | null>(null);
   const [selectedPersonIds, setSelectedPersonIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [showAddPerson, setShowAddPerson] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -124,9 +125,16 @@ const SplitScreen = () => {
                 <Text style={[styles.participantName, !isSelected && styles.participantInactive]}>
                   {p.name}
                 </Text>
-              </Pressable>
+          </Pressable>
             );
           })}
+          <Pressable
+            style={styles.addPersonChip}
+            onPress={() => setShowAddPerson(true)}
+          >
+            <Text style={styles.addPersonIcon}>+</Text>
+            <Text style={styles.addPersonText}>Thêm</Text>
+          </Pressable>
         </View>
 
         {/* Split type */}
@@ -186,6 +194,15 @@ const SplitScreen = () => {
           disabled={!payerId || calc.results.length === 0 || !calc.isValid || saving}
         />
       </View>
+
+      <AddPersonSheet
+        visible={showAddPerson}
+        onClose={() => setShowAddPerson(false)}
+        onCreated={(person) => {
+          setPersons((prev) => [...prev, person]);
+          setSelectedPersonIds((prev) => [...prev, person.id]);
+        }}
+      />
     </View>
   );
 };
@@ -231,6 +248,14 @@ const styles = StyleSheet.create({
   participantSelected: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
   participantName: { fontSize: 14, fontWeight: '600', color: colors.textPrimary },
   participantInactive: { color: colors.textTertiary },
+  addPersonChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    paddingVertical: 6, paddingHorizontal: 12,
+    borderRadius: radius.full, borderWidth: 1.5, borderColor: colors.accent,
+    borderStyle: 'dashed',
+  },
+  addPersonIcon: { fontSize: 18, fontWeight: '600', color: colors.accent },
+  addPersonText: { fontSize: 14, fontWeight: '600', color: colors.accent },
   results: { marginTop: spacing.xl, gap: spacing.sm },
   resultRow: {
     flexDirection: 'row', alignItems: 'center', gap: 12,

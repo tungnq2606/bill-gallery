@@ -79,6 +79,22 @@ export const billRepo = {
     await db.runAsync('UPDATE bills SET status = ?, updated_at = ? WHERE id = ?', status, now(), id);
   },
 
+  async update(id: string, data: Partial<CreateBillInput>): Promise<void> {
+    const db = await getDb();
+    const sets: string[] = [];
+    const values: SQLiteBindValue[] = [];
+    if (data.type !== undefined) { sets.push('type = ?'); values.push(data.type); }
+    if (data.amount !== undefined) { sets.push('amount = ?'); values.push(data.amount); }
+    if (data.date !== undefined) { sets.push('date = ?'); values.push(data.date); }
+    if (data.note !== undefined) { sets.push('note = ?'); values.push(data.note ?? null); }
+    if (data.merchant !== undefined) { sets.push('merchant = ?'); values.push(data.merchant ?? null); }
+    if (data.tripId !== undefined) { sets.push('trip_id = ?'); values.push(data.tripId ?? null); }
+    if (sets.length === 0) return;
+    sets.push('updated_at = ?'); values.push(now());
+    values.push(id);
+    await db.runAsync(`UPDATE bills SET ${sets.join(', ')} WHERE id = ?`, ...values);
+  },
+
   async softDelete(id: string): Promise<void> {
     const db = await getDb();
     await db.runAsync('UPDATE bills SET deleted_at = ?, updated_at = ? WHERE id = ?', now(), now(), id);

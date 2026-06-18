@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScreenHeader, FAB } from '@/shared/components';
+import { ScreenHeader, FAB, CreateTripSheet } from '@/shared/components';
 import { colors, spacing } from '@/shared/theme';
 import { useTripStore } from '@/stores/tripStore';
 import TripCard from '@/features/trips/TripCard';
@@ -11,6 +11,7 @@ const TripsScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { trips, loading, loadTrips } = useTripStore();
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     loadTrips();
@@ -44,7 +45,11 @@ const TripsScreen = () => {
       )}
       <FAB
         icon={<PlusIcon />}
-        onPress={() => {/* TODO: CreateTripSheet */}}
+        onPress={() => setShowCreate(true)}
+      />
+      <CreateTripSheet
+        visible={showCreate}
+        onClose={() => setShowCreate(false)}
       />
     </View>
   );

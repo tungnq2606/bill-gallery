@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScreenHeader, FAB } from '@/shared/components';
+import { ScreenHeader, FAB, ActionSheet } from '@/shared/components';
 import { colors } from '@/shared/theme';
 import { useBillStore } from '@/stores/billStore';
 import GalleryGrid from '@/features/gallery/GalleryGrid';
@@ -14,6 +14,7 @@ const GalleryScreen = () => {
   const insets = useSafeAreaInsets();
   const { bills, loading, loadBills, setFilter } = useBillStore();
   const [selected, setSelected] = useState('all');
+  const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
     loadBills();
@@ -37,7 +38,15 @@ const GalleryScreen = () => {
       <GalleryGrid bills={bills} />
       <FAB
         icon={<PlusIcon />}
-        onPress={() => router.push('/scan')}
+        onPress={() => setShowActions(true)}
+      />
+      <ActionSheet
+        visible={showActions}
+        onClose={() => setShowActions(false)}
+        options={[
+          { icon: '📷', label: 'Chụp / Chọn ảnh', onPress: () => router.push('/scan') },
+          { icon: '✏️', label: 'Nhập tay', onPress: () => router.push('/review') },
+        ]}
       />
     </View>
   );

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { View, Text, Image, ScrollView, Pressable, Modal, StyleSheet, Alert } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Badge, Card, PersonRow } from '@/shared/components';
 import { colors, typography, spacing, radius, shadows } from '@/shared/theme';
@@ -21,33 +21,39 @@ const BillDetailScreen = () => {
   const [shares, setShares] = useState<(SplitShare & { person: Person })[]>([]);
   const [showFullImage, setShowFullImage] = useState(false);
 
-  useEffect(() => {
+  const loadData = useCallback(async () => {
     if (!id) return;
-    const load = async () => {
-      const b = await billRepo.getById(id);
-      if (!b) return;
-      setBill(b);
-      setAttachment(await billRepo.getPrimaryAttachment(id));
+    const b = await billRepo.getById(id);
+    if (!b) return;
+    setBill(b);
+    setAttachment(await billRepo.getPrimaryAttachment(id));
 
-      const s = await splitRepo.getByBillId(id);
-      setSplit(s);
-      if (s) {
-        const rawShares = await splitRepo.getShares(s.id);
-        const withPerson = await Promise.all(
-          rawShares.map(async (share) => {
-            const person = await personRepo.getById(share.personId);
-            return { ...share, person: person! };
-          })
-        );
-        setShares(withPerson.filter((s) => s.person));
-      }
-    };
-    load();
+    const s = await splitRepo.getByBillId(id);
+    setSplit(s);
+    if (s) {
+      const rawShares = await splitRepo.getShares(s.id);
+      const withPerson = await Promise.all(
+        rawShares.map(async (share) => {
+          const person = await personRepo.getById(share.personId);
+          return { ...share, person: person! };
+        })
+      );
+      setShares(withPerson.filter((sh) => sh.person));
+    } else {
+      setShares([]);
+    }
   }, [id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   if (!bill) return <View style={styles.loading} />;
 
   const isPaid = bill.status === 'settled';
+  const hasImage = !!attachment?.uri;
 
   const handleDelete = () => {
     Alert.alert('Xóa hóa đơn', 'Bạn có chắc muốn xóa?', [
@@ -62,12 +68,21 @@ const BillDetailScreen = () => {
     ]);
   };
 
+  const handleToggleSharePaid = async (share: SplitShare) => {
+    if (share.status === 'paid') {
+      await splitRepo.markShareUnpaid(share.id);
+    } else {
+      await splitRepo.markSharePaid(share.id);
+    }
+    await loadData();
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Image header */}
         <View style={styles.imageHeader}>
-          {attachment?.uri ? (
+          {hasImage ? (
             <Pressable onPress={() => setShowFullImage(true)}>
               <Image source={{ uri: attachment.uri }} style={styles.image} />
             </Pressable>
@@ -99,20 +114,30 @@ const BillDetailScreen = () => {
         </View>
 
         {/* Split section */}
-        {shares.length > 0 && (
+        {shares.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>CHIA TIỀN</Text>
             {shares.map((share) => (
-              <PersonRow
-                key={share.id}
-                name={share.person.name}
-                initials={share.person.initials}
-                avatarColor={share.person.avatarColor}
-                subtitle={share.status === 'paid' ? 'Đã trả' : 'Chưa trả'}
-                amount={formatAmount(share.amount, bill.currency)}
-                amountColor={share.status === 'paid' ? colors.paid : colors.unpaid}
-              />
+              <Pressable key={share.id} onPress={() => handleToggleSharePaid(share)}>
+                <PersonRow
+                  name={share.person.name}
+                  initials={share.person.initials}
+                  avatarColor={share.person.avatarColor}
+                  subtitle={share.status === 'paid' ? '✓ Đã trả' : 'Chưa trả'}
+                  amount={formatAmount(share.amount, bill.currency)}
+                  amountColor={share.status === 'paid' ? colors.paid : colors.unpaid}
+                />
+              </Pressable>
             ))}
+          </View>
+        ) : (
+          <View style={styles.section}>
+            <Button
+              title="Chia tiền"
+              variant="outline"
+              full
+              onPress={() => router.push({ pathname: '/split', params: { billId: bill.id } })}
+            />
           </View>
         )}
 
@@ -139,23 +164,31 @@ const BillDetailScreen = () => {
               }}
             />
           )}
+          <Button
+            title="Chỉnh sửa"
+            variant="secondary"
+            full
+            onPress={() => router.push({ pathname: '/edit-bill', params: { billId: bill.id } })}
+          />
           <Button title="Xóa hóa đơn" variant="danger" full onPress={handleDelete} />
         </View>
       </ScrollView>
 
       {/* Full-screen image viewer */}
-      <Modal visible={showFullImage} transparent animationType="fade">
-        <Pressable style={styles.fullImageOverlay} onPress={() => setShowFullImage(false)}>
-          <Image
-            source={{ uri: attachment?.uri }}
-            style={styles.fullImage}
-            resizeMode="contain"
-          />
-          <View style={[styles.closeBtn, { top: insets.top + 10 }]}>
-            <Text style={styles.closeIcon}>✕</Text>
-          </View>
-        </Pressable>
-      </Modal>
+      {hasImage && (
+        <Modal visible={showFullImage} transparent animationType="fade">
+          <Pressable style={styles.fullImageOverlay} onPress={() => setShowFullImage(false)}>
+            <Image
+              source={{ uri: attachment.uri }}
+              style={styles.fullImage}
+              resizeMode="contain"
+            />
+            <View style={[styles.closeBtn, { top: insets.top + 10 }]}>
+              <Text style={styles.closeIcon}>✕</Text>
+            </View>
+          </Pressable>
+        </Modal>
+      )}
     </View>
   );
 };

@@ -72,6 +72,14 @@ export const splitRepo = {
       share.amount, now(), now(), shareId
     );
   },
+
+  async markShareUnpaid(shareId: string): Promise<void> {
+    const db = await getDb();
+    await db.runAsync(
+      `UPDATE split_shares SET status = 'unpaid', paid_amount = 0, paid_at = NULL, updated_at = ? WHERE id = ?`,
+      now(), shareId
+    );
+  },
 };
 
 const mapSplit = (row: Record<string, unknown>): Split => ({

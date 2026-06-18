@@ -54,6 +54,7 @@ const RootLayout = () => {
         <Stack.Screen name="scan" options={{ presentation: 'fullScreenModal' }} />
         <Stack.Screen name="review" />
         <Stack.Screen name="split" />
+        <Stack.Screen name="edit-bill" />
       </Stack>
     </>
   );

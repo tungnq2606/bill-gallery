@@ -8,6 +8,7 @@ interface PersonStore {
   loading: boolean;
   loadPersons: () => Promise<void>;
   createPerson: (name: string, initials: string, avatarColor: string, isMe?: boolean) => Promise<Person>;
+  deletePerson: (id: string) => Promise<void>;
 }
 
 export const usePersonStore = create<PersonStore>((set, get) => ({
@@ -26,5 +27,10 @@ export const usePersonStore = create<PersonStore>((set, get) => ({
     const person = await personRepo.create({ name, initials, avatarColor, isMe });
     await get().loadPersons();
     return person;
+  },
+
+  deletePerson: async (id) => {
+    await personRepo.softDelete(id);
+    await get().loadPersons();
   },
 }));
