@@ -3,6 +3,12 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 const BILLS_DIR = new Directory(Paths.document, 'bills');
 
+const ensureDir = (dir: Directory): void => {
+  if (!dir.exists) {
+    dir.create();
+  }
+};
+
 interface SavedImage {
   originalUri: string;
   thumbnailUri: string;
@@ -13,10 +19,10 @@ interface SavedImage {
  * Generates a 300px-wide thumbnail for gallery tiles.
  */
 export const saveImage = async (sourceUri: string, billId: string): Promise<SavedImage> => {
+  // Ensure parent bills/ dir exists first
+  ensureDir(BILLS_DIR);
   const billDir = new Directory(BILLS_DIR, billId);
-  if (!billDir.exists) {
-    billDir.create();
-  }
+  ensureDir(billDir);
 
   const original = new File(billDir, 'original.jpg');
   const source = new File(sourceUri);
