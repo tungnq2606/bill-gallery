@@ -108,11 +108,11 @@ export const billRepo = {
     return row ? mapAttachment(row) : null;
   },
 
-  async addAttachment(billId: string, uri: string, isPrimary = false): Promise<void> {
+  async addAttachment(billId: string, uri: string, isPrimary = false, thumbnailUri?: string): Promise<void> {
     const db = await getDb();
     await db.runAsync(
-      'INSERT INTO bill_attachments (id, bill_id, uri, is_primary, created_at) VALUES (?, ?, ?, ?, ?)',
-      generateId(), billId, uri, isPrimary ? 1 : 0, now()
+      'INSERT INTO bill_attachments (id, bill_id, uri, thumbnail_uri, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+      generateId(), billId, uri, thumbnailUri ?? null, isPrimary ? 1 : 0, now()
     );
   },
 };

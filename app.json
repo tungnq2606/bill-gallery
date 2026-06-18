@@ -8,15 +8,22 @@
     "scheme": "billgallery",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.billgallery.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Bill Gallery cần camera để chụp hóa đơn.",
+        "NSPhotoLibraryUsageDescription": "Bill Gallery cần truy cập thư viện ảnh để chọn hóa đơn."
+      }
     },
     "android": {
+      "package": "com.billgallery.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "permissions": ["CAMERA"],
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -35,7 +42,9 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      ["expo-camera", { "cameraPermission": "Bill Gallery cần camera để chụp hóa đơn." }],
+      ["expo-image-picker", { "photosPermission": "Bill Gallery cần truy cập thư viện ảnh để chọn hóa đơn." }]
     ],
     "experiments": {
       "typedRoutes": true,

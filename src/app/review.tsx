@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import { View, ScrollView, Text, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, ScrollView, Text, Image, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, TextField, SegmentedControl, ScreenHeader } from '@/shared/components';
-import { colors, spacing, typography } from '@/shared/theme';
+import { colors, spacing, typography, radius } from '@/shared/theme';
 import { formatAmount } from '@/utils/currency';
 import { toISODate } from '@/utils/date';
+import { runOcr } from '@/utils/ocrService';
+import { saveImage } from '@/utils/imageManager';
 import { billRepo } from '@/data/repositories';
 import type { BillType } from '@/data/types';
 
@@ -31,6 +33,24 @@ const ReviewScreen = () => {
   const [location, setLocation] = useState('');
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState(false);
+
+  useEffect(() => {
+    if (!params.imageUri || params.amount) return;
+    const doOcr = async () => {
+      setOcrLoading(true);
+      try {
+        const result = await runOcr(params.imageUri!);
+        if (result.total) setAmount(String(result.total));
+        if (result.merchant) setMerchant(result.merchant);
+        if (result.date) setDate(result.date);
+      } catch (e) {
+        console.warn('OCR failed:', e);
+      }
+      setOcrLoading(false);
+    };
+    doOcr();
+  }, []);
 
   const parsedAmount = parseInt(amount.replace(/\D/g, ''), 10) || 0;
 
@@ -49,7 +69,8 @@ const ReviewScreen = () => {
     });
 
     if (params.imageUri) {
-      await billRepo.addAttachment(bill.id, params.imageUri, true);
+      const saved = await saveImage(params.imageUri, bill.id);
+      await billRepo.addAttachment(bill.id, saved.originalUri, true, saved.thumbnailUri);
     }
 
     setSaving(false);
@@ -68,7 +89,8 @@ const ReviewScreen = () => {
       note: note || undefined,
     });
     if (params.imageUri) {
-      await billRepo.addAttachment(bill.id, params.imageUri, true);
+      const saved = await saveImage(params.imageUri, bill.id);
+      await billRepo.addAttachment(bill.id, saved.originalUri, true, saved.thumbnailUri);
     }
     setSaving(false);
     router.dismissAll();
@@ -87,6 +109,18 @@ const ReviewScreen = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Image preview */}
+        {params.imageUri && (
+          <View style={styles.imagePreview}>
+            <Image source={{ uri: params.imageUri }} style={styles.previewImage} resizeMode="cover" />
+            {ocrLoading && (
+              <View style={styles.ocrOverlay}>
+                <Text style={styles.ocrText}>Đang nhận diện...</Text>
+              </View>
+            )}
+          </View>
+        )}
+
         {/* Bill type */}
         <View style={styles.segmentWrap}>
           <SegmentedControl
@@ -200,6 +234,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   footer: { padding: spacing.xl, gap: 10, borderTopWidth: 1, borderTopColor: colors.separator },
+  imagePreview: {
+    height: 200, borderRadius: radius.md, overflow: 'hidden',
+    marginBottom: spacing.xl, backgroundColor: colors.grey200,
+  },
+  previewImage: { width: '100%', height: '100%' },
+  ocrOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  ocrText: { color: '#fff', fontSize: 14, fontWeight: '600' },
 });
 
 export default ReviewScreen;

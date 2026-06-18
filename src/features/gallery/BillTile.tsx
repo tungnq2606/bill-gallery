@@ -1,4 +1,5 @@
-import { View, Text, Image, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { Image } from 'expo-image';
 import { colors, radius, shadows, typography } from '@/shared/theme';
 import { StatusDot } from '@/shared/components';
 import { formatAmountShort } from '@/utils/currency';
@@ -37,7 +38,13 @@ const BillTile = ({ bill, attachment, onPress }: BillTileProps) => {
       onPress={onPress}
     >
       {hasImage ? (
-        <Image source={{ uri: attachment.uri }} style={styles.image} />
+        <Image
+          source={{ uri: attachment.thumbnailUri ?? attachment.uri }}
+          style={styles.image}
+          contentFit="cover"
+          transition={200}
+          placeholder={{ blurhash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4' }}
+        />
       ) : (
         <View style={[styles.placeholder, { backgroundColor: colors.grey100 }]}>
           <Text style={styles.placeholderIcon}>{icon}</Text>
@@ -70,7 +77,7 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   pressed: { transform: [{ scale: 0.96 }] },
-  image: { width: '100%', height: '100%', resizeMode: 'cover' },
+  image: { width: '100%', height: '100%' },
   placeholder: {
     width: '100%', height: '100%',
     alignItems: 'center', justifyContent: 'center',
