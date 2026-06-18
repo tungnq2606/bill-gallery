@@ -14,7 +14,7 @@ const ScreenHeader = ({ title, large = false, leftIcon, rightIcon, onBack }: Scr
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
+    <View style={[styles.header, { paddingTop: insets.top }]}>
       {onBack && leftIcon && (
         <Pressable style={styles.iconBtn} onPress={onBack}>{leftIcon}</Pressable>
       )}
@@ -27,7 +27,7 @@ const ScreenHeader = ({ title, large = false, leftIcon, rightIcon, onBack }: Scr
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: spacing.xl, paddingBottom: spacing.md, gap: spacing.md,
+    paddingHorizontal: spacing.xl, paddingBottom: spacing.sm, gap: spacing.md,
   },
   titleLarge: { ...typography.displayLg, flex: 1, letterSpacing: -0.5 },
   title: { ...typography.title, flex: 1 },
